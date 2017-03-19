@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<words>
+
+	<conjunctions>
+		<normal>
+			when
+			as
+			before
+			after
+			while
+		</normal>
+		<special>
+			once
+			during
+			if
+		</special>
+	</conjunctions>
+
+
+	<nouns>
+		<common>
+			god
+			tree
+			mountain
+			sea
+			lake
+			ocean			demon
+			sun
+			star
+			moon
+			light
+			church/churches
+			castle
+			time
+			lord
+			king
+			lady
+			queen
+			prince
+			princess/princesses
+			jester
+			sword
+			mace
+			morning
+			night
+			evening
+			wizard
+			nothingness/nothingnesses
+			sadness/sadnesses
+			fish/fish
+			octopus/octopodes
+			moose/meesopodes
+			ghost		</common>
+
+		<proper>
+			Void
+			God
+			Devil
+			Kek
+			Pepe
+			Holy One
+			Dark One
+			Cursed One
+		</proper>
+	</nouns>
+
+
+	<verbs>
+		run
+		walk
+		dive
+		grasp
+		hold
+		sing
+		wane
+		weep
+		bow
+		shadillay
+		come
+		burn
+		wake
+		withdraw
+		beckon
+		leave
+		blush/blushes
+		bless/blesses
+		caress/caresses
+		pass/passes
+		gnash/gnashes
+		wash/washes
+		wish/wishes
+		march/marches
+		search/searches
+		watch/watches
+		vex/vexes
+		bury/buries
+		carry/carries
+		cry/cries
+		fly/flies
+		hurry/hurries
+		marry/marries
+		worry/worries
+		slay
+		sway
+		play
+		lay
+		pray
+	</verbs>
+
+
+
+	<adjectives>
+		bearded
+		flaming
+		frozen
+		blazing
+		electrified
+		electric
+		cursed
+		dreadful
+		accursed
+		loathsome
+		abominable
+		foul
+		damnable
+		horrid
+		ghastly
+		white
+		black
+		blank
+		ghostly
+		fevered
+		long
+		epic
+		gigantic
+		unfathomable
+		gray
+		sad
+		grand
+		great
+		merry
+		abject
+		absolute
+		infinite
+		beautiful
+		magnificent
+		opulent
+		scaly
+		rigid
+		omnipresent
+		malevolent
+		benevolent
+		all-mighty
+		wonderous
+		triple
+		misshapen
+		malignant
+		immaculate
+	</adjectives>
+
+</words>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<conjunctions>
+	when
+	as
+	before
+	after
+	while
+	<special>
+		once
+		during
+		if
+	</special>
+</conjunctions>
+
+
+<nouns>
+
+    <common>
+    	god
+    	tree
+    	mountain
+    	sea		demon
+		sun
+		star
+		church/churches
+		castle
+		time    </common>
+
+    <proper>
+        God/the Gods
+		the Devil/Devils
+		
+    </proper>
+</nouns>
+
+
+<verbs>
+	run
+	walk
+	dive
+	grasp
+	hold
+	sing
+	wane
+	weep
+	bow
+</verbs>
+
+
+
+<adjectives>
+	
+
+</adjectives>

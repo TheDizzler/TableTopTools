@@ -1,0 +1,131 @@
+package Fabulousoft.rpgtools;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+import android.os.Environment;
+
+
+
+public class ProphecyActivity extends Activity {
+	
+	
+	ArrayList<String> conjunctionList = new ArrayList<String>();
+	ArrayList<String> nounCommonList = new ArrayList<String>();
+	ArrayList<String> nounProperList = new ArrayList<String>();
+	ArrayList<String> verbList = new ArrayList<String>();
+	ArrayList<String> adjectiveList = new ArrayList<String>();
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+	
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_prophecy);
+		
+		File wordListXml = new File(Environment.getExternalStorageDirectory() + "/WordList.xml");
+		try {
+//			BufferedWriter buffWriter = new BufferedWriter(new FileWriter(wordListXml));
+//			buffWriter.close();
+			FileInputStream projectXML = new FileInputStream(wordListXml);
+			Document xmlDoc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(wordListXml);
+			
+			Element words = xmlDoc.getDocumentElement();
+			words.normalize();
+			Element conjunctionsNode = (Element) words.getElementsByTagName("conjunctions").item(0);
+			Element specialConjNode =(Element)conjunctionsNode.getElementsByTagName("special").item(0);
+			
+			NodeList nounsNode = words.getElementsByTagName("nouns");
+			
+			
+			
+			projectXML.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (SAXException e) {
+			e.printStackTrace();
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		
+		
+//		try {
+//			File file = File.createTempFile("a", "b");
+//			InputStream is = getAssets().open("WordList.xml");
+//			OutputStream outputStream = new FileOutputStream(is);
+//			IOUtils.copy(inputStream, outputStream);
+//			outputStream.close();
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
+//		
+//		File file = new File(MainActivity.internalStorageDir, "/WordList.xml");
+//		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//		DocumentBuilder db;
+//		try {
+//			db = dbf.newDocumentBuilder();
+//			Document doc = db.parse(file);
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
+//			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//		} catch (SAXException e) {
+//			e.printStackTrace();
+//			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
+	}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.prophecy, menu);
+		return true;
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}
