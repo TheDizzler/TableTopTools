@@ -1,7 +1,8 @@
-package Fabulousoft.rpgtools;
+package fabulousoft.rpgtools;
 
 import java.io.File;
 
+import fabulousoft.rpgtools.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

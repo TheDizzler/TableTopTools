@@ -1,4 +1,4 @@
-package Fabulousoft.rpgtools;
+package fabulousoft.rpgtools;
 
 
 import java.io.IOException;
@@ -14,14 +14,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+//import fabulousoft.rpgtools.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -30,9 +36,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
+import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.ViewFlipper;
 
 
 class Noun {
@@ -83,8 +92,10 @@ class Prophecy {
 	
 	/** Full example:
 	 * 		(CAUSE)		[When] the [gray] [wizard] of [merry] [sadness] [comes],
-	 * 					 conj		adj		noun		adj		noun	 verb
-	 * 		(RESULT)	*/
+	 * 					 conj		adj		noun	  2nd adj  2nd noun	 verb
+	 * 		(RESULT)	the [gelatinous] [princess] shall [mistakenly] [venture].
+	 * 						  3rd adj	  3rd noun			adverb		 2nd verb
+	 * */
 	private String				fullProphecy;
 	
 	
@@ -92,11 +103,16 @@ class Prophecy {
 	 * [Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb].
 	 */
 	private String				conjunction				= "[Conjunction]";
-	private String				optPrimaryAdjective		= "[adjective]";
-	private Noun				primaryNoun				= new Noun("[noun]");
-	private String				optSecondaryAdjective	= "[adjective]";
-	private Noun				optSecondaryNoun		= new Noun("[noun]");
-	private Verb				primaryVerb				= new Verb("[verb]");
+	private String				causePrimaryAdjective	= "[adjective]";
+	private Noun				causePrimaryNoun		= new Noun("[noun]");
+	private String				causeSecondaryAdjective	= "[adjective]";
+	private Noun				causeSecondaryNoun		= new Noun("[noun]");
+	private Verb				causeVerb				= new Verb("[verb]");
+	
+	private String				resultAdjective			= "[adjective]";
+	private Noun				resultNoun				= new Noun("[noun]");
+	private String				adverb					= "[adverb]ally";
+	private Verb				resultVerb				= new Verb("[verb]");
 	
 	Random						rand					= new Random();
 	
@@ -257,7 +273,7 @@ class Prophecy {
 			@Override
 			public void onClick(View arg0) {
 			
-				optPrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 				reconstructProphecy();
 			}
 		});
@@ -278,9 +294,9 @@ class Prophecy {
 			public void onClick(View arg0) {
 			
 				if (toggleBtnPrimaryNounProper.isChecked())
-					primaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
 				else
-					primaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+					causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
 				reconstructProphecy();
 			}
 			
@@ -294,7 +310,7 @@ class Prophecy {
 			public void onClick(View v) {
 			
 				if (toggleBtnSecondaryAdj.isChecked()) {
-					optSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+					causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 				}
 				reconstructProphecy();
 			}
@@ -309,7 +325,7 @@ class Prophecy {
 			public void onClick(View v) {
 			
 				if (toggleBtnSecondaryNoun.isChecked())
-					optSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+					causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
 				toggleBtnSecondaryAdj.setEnabled(toggleBtnSecondaryNoun.isChecked());
 				
 				reconstructProphecy();
@@ -328,17 +344,17 @@ class Prophecy {
 		else
 			conjunction = (String) spinnerConj.getSelectedItem();
 		
-		optPrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 		
 		if (toggleBtnPrimaryNounProper.isChecked())
-			primaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+			causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
 		else
-			primaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+			causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
 		
-		optSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
-		optSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
 		
-		primaryVerb = verbList.get(rand.nextInt(verbList.size()));
+		causeVerb = verbList.get(rand.nextInt(verbList.size()));
 		
 		reconstructProphecy();
 	}
@@ -347,14 +363,28 @@ class Prophecy {
 	public void reconstructProphecy() {
 	
 		reconstructCause();
-		
+		reconstrucResult();
 		
 		propheticText.setText(fullProphecy);
 	};
 	
 	
-	private void reconstructCause() {
+	private void reconstrucResult() {
+	
+		fullProphecy += "the ";
 		
+		fullProphecy += resultAdjective + " ";
+		fullProphecy += resultNoun.single + " ";
+		fullProphecy += "shall ";
+		fullProphecy += resultVerb.baseForm + " ";
+		fullProphecy += adverb;
+		fullProphecy += ".";
+		
+	}
+	
+	
+	private void reconstructCause() {
+	
 		fullProphecy = firstCharToUpper(conjunction);
 		fullProphecy += " ";
 		if (toggleBtnPrimaryNounProper.isChecked())
@@ -365,16 +395,16 @@ class Prophecy {
 		propheticText.setText(fullProphecy);
 		if (toggleBtnPrimaryAdj.isChecked()) {
 			if (toggleBtnPrimaryNounProper.isChecked())
-				fullProphecy += firstCharToUpper(optPrimaryAdjective) + " ";
+				fullProphecy += firstCharToUpper(causePrimaryAdjective) + " ";
 			else
-				fullProphecy += optPrimaryAdjective + " ";
+				fullProphecy += causePrimaryAdjective + " ";
 		}
 		
 		
 		if (toggleBtnPrimaryNounPlural.isChecked())
-			fullProphecy += primaryNoun.plural + " ";
+			fullProphecy += causePrimaryNoun.plural + " ";
 		else
-			fullProphecy += primaryNoun.single + " ";
+			fullProphecy += causePrimaryNoun.single + " ";
 		
 		
 		
@@ -382,22 +412,23 @@ class Prophecy {
 			fullProphecy += "of ";
 			
 			if (toggleBtnSecondaryAdj.isChecked())
-				fullProphecy += optSecondaryAdjective + " ";
+				fullProphecy += causeSecondaryAdjective + " ";
 			
-			fullProphecy += optSecondaryNoun.single + " ";
+			fullProphecy += causeSecondaryNoun.single + " ";
 		}
 		
 		
 		
 		
 		if (toggleBtnPrimaryNounPlural.isChecked())
-			fullProphecy += primaryVerb.baseForm;
+			fullProphecy += causeVerb.baseForm;
 		else
-			fullProphecy += primaryVerb.sForm;
-	
+			fullProphecy += causeVerb.sForm;
+		
+		fullProphecy += ", ";
 	}
-
-
+	
+	
 	public static String firstCharToUpper(String change) {
 	
 		return change.substring(0, 1).toUpperCase() + change.substring(1);
@@ -406,10 +437,14 @@ class Prophecy {
 	
 }
 
+
+
 public class ProphecyActivity extends Activity {
 	
 	
 	Prophecy	prophecy;
+	TabHost		tabHost;
+	
 	
 	
 	@Override
@@ -420,6 +455,110 @@ public class ProphecyActivity extends Activity {
 		
 		prophecy = new Prophecy(this);
 		
+		
+		tabHost = (TabHost) findViewById(R.id.tabhost);
+		tabHost.setup();
+		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+			
+			View	currentView;
+			View	previousView;
+			int		previousTab;
+			
+			
+			@Override
+			public void onTabChanged(String arg0) {
+			
+				if (previousView == null)
+					previousView = tabHost.getCurrentView();
+				
+				currentView = tabHost.getCurrentView();
+				
+				if (tabHost.getCurrentTab() > previousTab) {
+					previousView.startAnimation(slideToLeftAnimation());
+					currentView.startAnimation(slideFromRightAnimation());
+					Log.w("Halp", "GO UP");
+				} else {
+					previousView.startAnimation(slideToRightAnimation());
+					currentView.startAnimation(slideFromLeftAnimation());
+					Log.w("Halp", "GO DOWN");
+				}
+				previousView = currentView;
+				previousTab = tabHost.getCurrentTab();
+				
+			}
+			
+			
+		});
+		
+		TabHost.TabSpec tabSpec = tabHost.newTabSpec("Tab One");
+		tabSpec.setContent(R.id.tab1);
+		tabSpec.setIndicator("Cause");
+		tabHost.addTab(tabSpec);
+		
+		tabSpec = tabHost.newTabSpec("Result");
+		tabSpec.setContent(R.id.tab2);
+		tabSpec.setIndicator("Result");
+		tabHost.addTab(tabSpec);
+		
+//		currentTab = tabHost.getCurrentTab();
+	}
+	
+	
+	private Animation slideToLeftAnimation() {
+	
+		Animation slideOutRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, -1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideOutRight.setDuration(250);
+		slideOutRight.setInterpolator(new AccelerateInterpolator());
+		
+		return slideOutRight;
+	}
+	
+	
+	private Animation slideFromLeftAnimation() {
+	
+		Animation slideFromRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, -1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideFromRight.setDuration(250);
+		slideFromRight.setInterpolator(new AccelerateInterpolator());
+		
+		
+		return slideFromRight;
+	}
+	
+	
+	private Animation slideToRightAnimation() {
+	
+		Animation slideOutRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideOutRight.setDuration(250);
+		slideOutRight.setInterpolator(new AccelerateInterpolator());
+		
+		return slideOutRight;
+	}
+	
+	
+	private Animation slideFromRightAnimation() {
+	
+		Animation slideFromRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideFromRight.setDuration(250);
+		slideFromRight.setInterpolator(new AccelerateInterpolator());
+		
+		
+		return slideFromRight;
 	}
 	
 	
@@ -433,6 +572,7 @@ public class ProphecyActivity extends Activity {
 	
 		generateRandomProphecy();
 	}
+	
 	
 	
 	@Override

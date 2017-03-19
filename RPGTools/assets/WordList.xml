@@ -51,7 +51,8 @@
 			fish/fish
 			octopus/octopodes
 			moose/meesopodes
-			ghost		</common>
+			ghost
+			seer		</common>
 
 		<proper>
 			Void
@@ -111,6 +112,7 @@
 
 
 	<adjectives>
+		gelatinous
 		bearded
 		flaming
 		frozen

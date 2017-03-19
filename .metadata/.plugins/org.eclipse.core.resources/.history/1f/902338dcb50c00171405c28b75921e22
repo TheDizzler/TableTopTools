@@ -1,0 +1,10 @@
+package Fabulousoft.rpgtools.fragments;
+
+import android.app.Fragment;
+
+
+public class CauseControlFragment extends Fragment {
+	
+	
+	
+}
