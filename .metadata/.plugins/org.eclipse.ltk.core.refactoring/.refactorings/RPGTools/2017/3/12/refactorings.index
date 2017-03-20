@@ -8,3 +8,9 @@
 1489940247022	Rename package 'mabulousoft.rpgtools'
 1489940265311	Move compilation unit
 1489940271581	Delete element
+1489996782840	Rename field 'toggleBtnResultProperNoun'
+1490006612565	Rename resource 'locked 49px.png'
+1490006620310	Rename resource 'unlocked 49px.png'
+1490009151535	Rename field 'switch_conjRand'
+1490009168515	Rename field 'lockBtn_onjunction'
+1490009190412	Rename field 'lockBtn_conjunction'

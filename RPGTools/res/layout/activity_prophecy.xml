@@ -16,20 +16,30 @@
         android:layout_height="wrap_content"
         android:text="[Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb]." />
 
+    <Button
+        android:id="@+id/btn_Generate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:onClick="generateProphecy"
+        android:text="Prophesize" />
+
     <TabHost
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
+
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:background="#C00000" >
             </TabWidget>
 
             <FrameLayout
@@ -65,13 +75,5 @@
             </FrameLayout>
         </LinearLayout>
     </TabHost>
-
-    <Button
-        android:id="@+id/btn_Generate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:onClick="generateProphecy"
-        android:text="Prophesize" />
 
 </LinearLayout>

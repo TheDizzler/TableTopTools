@@ -20,6 +20,10 @@
 
 	<nouns>
 		<common>
+			kingdom
+			era
+			period
+			age
 			god
 			tree
 			mountain
@@ -32,6 +36,9 @@
 			light
 			church/churches
 			castle
+			fortress
+			shrine
+			palace
 			time
 			lord
 			king
@@ -112,6 +119,7 @@
 
 
 	<adjectives>
+		dreadful
 		gelatinous
 		bearded
 		flaming
@@ -159,6 +167,10 @@
 		misshapen
 		malignant
 		immaculate
+		foolish
+		gleeful
+		oppressive
+		free
 	</adjectives>
 
 </words>

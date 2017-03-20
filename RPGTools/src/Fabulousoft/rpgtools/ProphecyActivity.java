@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -35,9 +36,14 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -126,13 +132,43 @@ class Prophecy {
 	
 	
 	TextView					propheticText;
+	
+	/* Cause Controls */
+	ImageView					lockBtnConjunction;
 	Spinner						spinnerConj;
-	CheckBox					checkBoxConjRand;
-	ToggleButton				toggleBtnPrimaryAdj;
+	Switch						switchPrimaryAdjective;
+	ImageView					lockBtnPrimaryAdj;
 	ToggleButton				toggleBtnPrimaryNounPlural;
 	ToggleButton				toggleBtnPrimaryNounProper;
-	ToggleButton				toggleBtnSecondaryAdj;
-	ToggleButton				toggleBtnSecondaryNoun;
+	ImageView					lockBtnPrimaryNoun;
+	Switch						switchSecondaryNoun;
+	ToggleButton				toggleBtnSecondaryNounProper;
+	ToggleButton				toggleBtnSecondaryNounPlural;
+	ImageView					lockBtnSecondaryNoun;
+	Switch						switchSecondaryAdjective;
+	
+	ImageView					lockBtnSecondaryAdjective;
+	
+	/* Result Controls */
+	Switch						switchResultAdjective;
+	ImageView					lockBtnResultAdjective;
+	ToggleButton				toggleBtnResultNounProper;
+	ToggleButton				toggleBtnResultNounPlural;
+	ImageView					lockBtnResultNoun;
+	
+	
+	boolean						conjunctionLocked		= false;
+	boolean						primaryNounLocked		= false;
+	boolean						primaryAdjLocked		= false;
+	boolean						secondaryNounLocked		= false;
+	boolean						secondaryAdjLocked		= false;
+	boolean						causeVerbLocked			= false;
+	
+	boolean						resultAdjLocked			= false;
+	boolean						resultNounLocked		= false;
+	boolean						resultVerbLocked		= false;
+	
+	
 	
 	
 	public Prophecy(Activity activity) {
@@ -206,57 +242,54 @@ class Prophecy {
 	}
 	
 	
-	private void initComponents(Activity activity) {
+	private void initComponents(final Activity activity) {
 	
 		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
 		
-		checkBoxConjRand = (CheckBox) activity.findViewById(R.id.checkBox_conjRand);
+		/* Cause Controls */
+		lockBtnConjunction = (ImageView) activity.findViewById(R.id.lockBtn_conj);
 		spinnerConj = (Spinner) activity.findViewById(R.id.spinner_Conjunctions);
-		toggleBtnPrimaryAdj = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryAdjective);
+		switchPrimaryAdjective = (Switch) activity.findViewById(R.id.switch_primaryAdjective);
+		lockBtnPrimaryAdj = (ImageView) activity.findViewById(R.id.lockBtn_primaryAdj);
 		toggleBtnPrimaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounPlural);
 		toggleBtnPrimaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounProper);
-		toggleBtnSecondaryNoun = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNoun);
-		toggleBtnSecondaryAdj = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryAdjective);
+		lockBtnPrimaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_primaryNoun);
 		
+		switchSecondaryNoun = (Switch) activity.findViewById(R.id.switch_secondaryNoun);
+		toggleBtnSecondaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounProper);
+		toggleBtnSecondaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounPlural);
+		lockBtnSecondaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_secondaryNoun);
+		switchSecondaryAdjective = (Switch) activity.findViewById(R.id.switch_secondaryAdjective);
+		lockBtnSecondaryAdjective = (ImageView) activity.findViewById(R.id.lockBtn_secondaryAdjective);
 		
-		checkBoxConjRand.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			boolean	firstTime	= true;
+		lockBtnConjunction.setOnClickListener(new OnClickListener() {
 			
 			
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			public void onClick(View arg0) {
 			
-				if (!firstTime) {
-					if (checkBoxConjRand.isChecked())
-						conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
-					else
-						conjunction = (String) spinnerConj.getSelectedItem();
-					
-					reconstructProphecy();
-				} else
-					firstTime = false;
-				
-				spinnerConj.setEnabled(!checkBoxConjRand.isChecked());
+				conjunctionLocked = !conjunctionLocked;
+				if (conjunctionLocked) {
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+				spinnerConj.setEnabled(conjunctionLocked);
 			}
 		});
-		checkBoxConjRand.setChecked(true);
+		
 		
 		ArrayAdapter<String> conjAdap = new ArrayAdapter<String>(activity,
 			android.R.layout.simple_spinner_dropdown_item, conjunctionList);
 		spinnerConj.setAdapter(conjAdap);
+		spinnerConj.setEnabled(false);
 		spinnerConj.setOnItemSelectedListener(new OnItemSelectedListener() {
-			
-			boolean	firstTime	= true;
-			
 			
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			
-				if (!firstTime)
-					conjunction = (String) spinnerConj.getSelectedItem();
-				else
-					firstTime = false;
+				conjunction = (String) spinnerConj.getSelectedItem();
 				reconstructProphecy();
 			}
 			
@@ -267,23 +300,39 @@ class Prophecy {
 			}
 		});
 		
-		toggleBtnPrimaryAdj.setChecked(true);
-		toggleBtnPrimaryAdj.setOnClickListener(new OnClickListener() {
+		lockBtnConjunction.callOnClick();
+		
+		switchPrimaryAdjective.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 			
-				causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				if (!primaryAdjLocked)
+					causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 				reconstructProphecy();
 			}
 		});
+		
+		lockBtnPrimaryAdj.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryAdjLocked = !primaryAdjLocked;
+				if (primaryAdjLocked)
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
 		
 		toggleBtnPrimaryNounPlural.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 			
-				
 				reconstructProphecy();
 			}
 		});
@@ -293,24 +342,82 @@ class Prophecy {
 			@Override
 			public void onClick(View arg0) {
 			
-				if (toggleBtnPrimaryNounProper.isChecked())
-					causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+				if (!primaryNounLocked) {
+					if (toggleBtnPrimaryNounProper.isChecked())
+						causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnPrimaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryNounLocked = !primaryNounLocked;
+				if (primaryNounLocked) {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+			}
+		});
+		
+		
+		switchSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryAdjective.isChecked() && !secondaryAdjLocked) {
+					causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryAdjLocked = !secondaryAdjLocked;
+				if (secondaryAdjLocked)
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
 				else
-					causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+			}
+		});
+		
+		
+		switchSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryNoun.isChecked() && !secondaryNounLocked)
+					causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				switchSecondaryAdjective.setEnabled(switchSecondaryNoun.isChecked());
+				
 				reconstructProphecy();
 			}
 			
 			
 		});
 		
-		toggleBtnSecondaryAdj.setChecked(true);
-		toggleBtnSecondaryAdj.setOnClickListener(new OnClickListener() {
+		toggleBtnSecondaryNounProper.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onClick(View v) {
+			public void onClick(View arg0) {
 			
-				if (toggleBtnSecondaryAdj.isChecked()) {
-					causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				if (!secondaryNounLocked) {
+					if (toggleBtnSecondaryNounProper.isChecked())
+						causeSecondaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
 				}
 				reconstructProphecy();
 			}
@@ -318,20 +425,103 @@ class Prophecy {
 			
 		});
 		
-		toggleBtnSecondaryNoun.setChecked(true);
-		toggleBtnSecondaryNoun.setOnClickListener(new OnClickListener() {
+		toggleBtnSecondaryNounPlural.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 			
-				if (toggleBtnSecondaryNoun.isChecked())
-					causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
-				toggleBtnSecondaryAdj.setEnabled(toggleBtnSecondaryNoun.isChecked());
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryNounLocked = !secondaryNounLocked;
+				if (secondaryNounLocked)
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		
+		/* Result controls */
+		switchResultAdjective = (Switch) activity.findViewById(R.id.switch_resultAdjective);
+		lockBtnResultAdjective = (ImageView) activity.findViewById(R.id.lockBtn_resultAdjective);
+		toggleBtnResultNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultProperNoun);
+		toggleBtnResultNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultNounPlural);
+		lockBtnResultNoun = (ImageView) activity.findViewById(R.id.lockBtn_resultNoun);
+		
+		
+		switchResultAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (switchResultAdjective.isChecked() && !resultAdjLocked)
+					resultAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 				
 				reconstructProphecy();
 			}
+		});
+		
+		lockBtnResultAdjective.setOnClickListener(new OnClickListener() {
 			
+			@Override
+			public void onClick(View v) {
 			
+				resultAdjLocked = !resultAdjLocked;
+				if (resultAdjLocked)
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		
+		toggleBtnResultNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (!resultNounLocked) {
+					if (toggleBtnResultNounProper.isChecked())
+						resultNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						resultNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		toggleBtnResultNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnResultNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultNounLocked = !resultNounLocked;
+				if (resultNounLocked)
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
 		});
 	}
 	
@@ -339,22 +529,40 @@ class Prophecy {
 	public void generateFullProphecy() {
 	
 		
-		if (checkBoxConjRand.isChecked())
-			conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
-		else
+		if (conjunctionLocked)
 			conjunction = (String) spinnerConj.getSelectedItem();
-		
-		causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
-		
-		if (toggleBtnPrimaryNounProper.isChecked())
-			causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
 		else
-			causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+			conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
 		
-		causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
-		causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		if (!primaryAdjLocked)
+			causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
 		
-		causeVerb = verbList.get(rand.nextInt(verbList.size()));
+		if (!primaryNounLocked) {
+			if (toggleBtnPrimaryNounProper.isChecked())
+				causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+			else
+				causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		}
+		
+		if (!secondaryAdjLocked)
+			causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		if (!secondaryNounLocked)
+			causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		
+		if (!causeVerbLocked)
+			causeVerb = verbList.get(rand.nextInt(verbList.size()));
+		
+		if (!resultAdjLocked)
+			resultAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		
+		if (!resultNounLocked) {
+			if (toggleBtnResultNounProper.isChecked())
+				resultNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+			else
+				resultNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		}
+		if (!resultVerbLocked)
+			resultVerb = verbList.get(rand.nextInt(verbList.size()));
 		
 		reconstructProphecy();
 	}
@@ -363,24 +571,13 @@ class Prophecy {
 	public void reconstructProphecy() {
 	
 		reconstructCause();
+		fullProphecy += ", ";
 		reconstrucResult();
+		// close prophecy
+		fullProphecy += ".";
 		
 		propheticText.setText(fullProphecy);
 	};
-	
-	
-	private void reconstrucResult() {
-	
-		fullProphecy += "the ";
-		
-		fullProphecy += resultAdjective + " ";
-		fullProphecy += resultNoun.single + " ";
-		fullProphecy += "shall ";
-		fullProphecy += resultVerb.baseForm + " ";
-		fullProphecy += adverb;
-		fullProphecy += ".";
-		
-	}
 	
 	
 	private void reconstructCause() {
@@ -393,7 +590,7 @@ class Prophecy {
 			fullProphecy += "the ";
 		
 		propheticText.setText(fullProphecy);
-		if (toggleBtnPrimaryAdj.isChecked()) {
+		if (switchPrimaryAdjective.isChecked()) {
 			if (toggleBtnPrimaryNounProper.isChecked())
 				fullProphecy += firstCharToUpper(causePrimaryAdjective) + " ";
 			else
@@ -401,22 +598,46 @@ class Prophecy {
 		}
 		
 		
-		if (toggleBtnPrimaryNounPlural.isChecked())
-			fullProphecy += causePrimaryNoun.plural + " ";
-		else
-			fullProphecy += causePrimaryNoun.single + " ";
+		if (toggleBtnPrimaryNounPlural.isChecked()) {
+			if (toggleBtnPrimaryNounProper.isChecked())
+				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
+			else
+				fullProphecy += causePrimaryNoun.plural;
+		} else {
+			if (toggleBtnPrimaryNounProper.isChecked())
+				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
+			else
+				fullProphecy += causePrimaryNoun.single;
+		}
+		fullProphecy += " ";
 		
 		
-		
-		if (toggleBtnSecondaryNoun.isChecked()) {
+		if (switchSecondaryNoun.isChecked()) {
 			fullProphecy += "of ";
 			
-			if (toggleBtnSecondaryAdj.isChecked())
-				fullProphecy += causeSecondaryAdjective + " ";
+			if (switchSecondaryAdjective.isChecked()) {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryAdjective);
+				else
+					fullProphecy += causeSecondaryAdjective + " ";
+			}
 			
-			fullProphecy += causeSecondaryNoun.single + " ";
+			fullProphecy += " ";
+			
+			if (toggleBtnSecondaryNounPlural.isChecked()) {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.plural);
+				else
+					fullProphecy += causeSecondaryNoun.plural;
+				
+			} else {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.single);
+				else
+					fullProphecy += causeSecondaryNoun.single;
+			}
 		}
-		
+		fullProphecy += " ";
 		
 		
 		
@@ -425,7 +646,42 @@ class Prophecy {
 		else
 			fullProphecy += causeVerb.sForm;
 		
-		fullProphecy += ", ";
+	}
+	
+	
+	private void reconstrucResult() {
+	
+		if (toggleBtnResultNounProper.isChecked())
+			fullProphecy += "The ";
+		else
+			fullProphecy += "the ";
+		
+		if (switchResultAdjective.isChecked()) {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultAdjective);
+			else
+				fullProphecy += resultAdjective;
+			
+			fullProphecy += " ";
+		}
+		
+		if (toggleBtnResultNounPlural.isChecked()) {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.plural);
+			else
+				fullProphecy += resultNoun.plural;
+		} else {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.single);
+			else
+				fullProphecy += resultNoun.single;
+		}
+		
+		fullProphecy += " ";
+		fullProphecy += "shall ";
+		fullProphecy += resultVerb.baseForm + " ";
+		fullProphecy += adverb;
+		
 	}
 	
 	
@@ -476,11 +732,9 @@ public class ProphecyActivity extends Activity {
 				if (tabHost.getCurrentTab() > previousTab) {
 					previousView.startAnimation(slideToLeftAnimation());
 					currentView.startAnimation(slideFromRightAnimation());
-					Log.w("Halp", "GO UP");
 				} else {
 					previousView.startAnimation(slideToRightAnimation());
 					currentView.startAnimation(slideFromLeftAnimation());
-					Log.w("Halp", "GO DOWN");
 				}
 				previousView = currentView;
 				previousTab = tabHost.getCurrentTab();
@@ -500,7 +754,6 @@ public class ProphecyActivity extends Activity {
 		tabSpec.setIndicator("Result");
 		tabHost.addTab(tabSpec);
 		
-//		currentTab = tabHost.getCurrentTab();
 	}
 	
 	
