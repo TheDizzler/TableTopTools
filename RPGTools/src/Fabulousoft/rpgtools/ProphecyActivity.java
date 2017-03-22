@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 //import fabulousoft.rpgtools.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -778,6 +779,7 @@ public class ProphecyActivity extends Activity {
 		TabHost.TabSpec tabSpec = tabHost.newTabSpec("Tab One");
 		tabSpec.setContent(R.id.tab1);
 		tabSpec.setIndicator("Cause");
+		
 		tabHost.addTab(tabSpec);
 		
 		tabSpec = tabHost.newTabSpec("Result");
@@ -785,6 +787,17 @@ public class ProphecyActivity extends Activity {
 		tabSpec.setIndicator("Result");
 		tabHost.addTab(tabSpec);
 		
+	}
+	
+	
+	@Override public void onResume() {
+		
+		super.onResume();
+		
+		TextView tv = (TextView) tabHost.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
+		tv.setTextColor(Color.WHITE);
+		tv = (TextView) tabHost.getTabWidget().getChildAt(1).findViewById(android.R.id.title);
+		tv.setTextColor(Color.WHITE);
 	}
 	
 	

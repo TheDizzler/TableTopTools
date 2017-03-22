@@ -1,48 +1,51 @@
 package fabulousoft.rpgtools.fragments;
 
 import fabulousoft.rpgtools.R;
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Bundle;
+import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 
 
-public class ProphecyView extends LinearLayout {
+public class ProphecyView extends View {
 	
 	
-	String			text		= "Test";
+	String			text		= "Pepe";
+	TextPaint		textPaint;
+	DynamicLayout	textLayout;
+	
 	String			subText		= "Noun";
 	TextPaint		subTextPaint;
 	/* Use Static Layout for text that won't change. Use dynamic for changing text. */
 	StaticLayout	subTextLayout;
-	
-	
-	Paint			textBGColor;
 	Paint			subTextBGPaint;
+	
+//	Paint			textBGColor;
+	
 	
 	
 	RectF			rectSubText	= new RectF();
 	
 	
-	private float	centerX;
-	private float	centerY;
+	public int		textHeight;
+	public int		textWidth;
 	
-	private float	mRadius;
+	
+	private float	density;
+	private int		textPadding;
+	private int		textWidthPadding;
+	private int		centered;
+	
 	
 	
 	public ProphecyView(Context context) {
@@ -68,24 +71,31 @@ public class ProphecyView extends LinearLayout {
 	
 	private void initPaints() {
 	
-		textBGColor = new Paint(Paint.ANTI_ALIAS_FLAG);
-		textBGColor.setStyle(Paint.Style.FILL);
-		textBGColor.setColor(Color.YELLOW);
+		textPaint = new TextPaint();
+		textPaint.setAntiAlias(true);
+//		textPaint.setUnderlineText(true);
+		textPaint.setTextSize(20 * getResources().getDisplayMetrics().density);
+		textPaint.setColor(0xFF000000);
+		
+		textWidth = (int) textPaint.measureText(text);
+		textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+		
+		subTextBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		subTextBGPaint.setStyle(Paint.Style.FILL);
+		subTextBGPaint.setColor(Color.YELLOW);
 		
 		subTextPaint = new TextPaint();
 		subTextPaint.setAntiAlias(true);
 		subTextPaint.setTextSize(16 * getResources().getDisplayMetrics().density);
 		subTextPaint.setColor(0xFF000000);
 		
-		int width = (int) subTextPaint.measureText(text);
-        subTextLayout = new StaticLayout(text, subTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
-        
-        
-//		subTextBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//		subTextBGPaint.setColor(Color.YELLOW);
-//		subTextBGPaint.setStyle(Paint.Style.STROKE);
-//		subTextBGPaint.setStrokeWidth(16 * getResources().getDisplayMetrics().density);
-//		subTextBGPaint.setStrokeCap(Paint.Cap.ROUND);
+		int subTextwidth = (int) subTextPaint.measureText(subText);
+		subTextLayout = new StaticLayout(subText, subTextPaint, subTextwidth, Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+		
+		
+		density = getResources().getDisplayMetrics().density;
+		textPadding = (int) (2 / density);
+		textWidthPadding = (int) (12 / density);
 		
 		setWillNotDraw(false);
 	}
@@ -94,87 +104,45 @@ public class ProphecyView extends LinearLayout {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 	
-		// determine the width
-        int width;
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthRequirement = MeasureSpec.getSize(widthMeasureSpec);
-        if (widthMode == MeasureSpec.EXACTLY) {
-            width = widthRequirement;
-        } else {
-            width = subTextLayout.getWidth() + getPaddingLeft() + getPaddingRight();
-            if (widthMode == MeasureSpec.AT_MOST) {
-                if (width > widthRequirement) {
-                    width = widthRequirement;
-                    // too long for a single line so relayout as multiline
-                    subTextLayout = new StaticLayout(text, subTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-                }
-            }
-        }
-
-        // determine the height
-        int height;
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightRequirement = MeasureSpec.getSize(heightMeasureSpec);
-        if (heightMode == MeasureSpec.EXACTLY) {
-            height = heightRequirement;
-        } else {
-            height = subTextLayout.getHeight() + getPaddingTop() + getPaddingBottom();
-            if (heightMode == MeasureSpec.AT_MOST) {
-                height = Math.min(height, heightRequirement);
-            }
-        }
-
-        // Required call: set width and height
-        setMeasuredDimension(width, height);
 		
-		rectSubText.top = 0;
-		rectSubText.left = 0;
-		rectSubText.right = width;
-		rectSubText.bottom = height;
-//		rectSubText.set(0, 0, w/2, h/2);
-//		int size = Math.min(w, h);
-//		setMeasuredDimension(size, size);
-//		Log.w("Check", w + " x " + h);
+		
+		textWidth = (int) textPaint.measureText(text);
+		textHeight = textLayout.getHeight();
+		int subTextHeight = subTextLayout.getHeight();
+		int subTextWidth = (int) subTextPaint.measureText(subText);
+		int width;
+		if (subTextWidth > textWidth)
+			width = subTextWidth;
+		else
+			width = textWidth;
+		
+		
+		centered = (int) ((textWidth - subTextWidth) / 2);
+		
+		rectSubText.top = textHeight;
+		rectSubText.bottom = textHeight + subTextHeight + textPadding * 2;
+		rectSubText.left = centered - (textWidthPadding);
+		rectSubText.right = centered + subTextPaint.measureText(subText) + textWidthPadding;
+		
+		int height = (int) (textHeight + rectSubText.height() + textPadding * 2);
+		
+		setMeasuredDimension(width, height);
 	}
 	
 	
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-	
-		centerX = w / 2f;
-		centerY = h / 2f;
-		
-		rectSubText.top = 0;
-		rectSubText.right = 0;
-//		rectSubText.left = centerX;
-//		rectSubText.bottom = centerY;
-		
-		
-		mRadius = Math.min(w, h) / 2f;
-	}
 	
 	
 	@Override
 	public void onDraw(Canvas canvas) {
 	
 		super.onDraw(canvas);
-//		canvas.drawRoundRect(rectSubText, 16, 16, rectSubColor)
 		
-//		canvas.drawCircle(centerX, centerY, mRadius, subTextBGPaint);
 		
-		canvas.drawRoundRect(rectSubText, 32, 32, textBGColor);
+		textLayout.draw(canvas);
+		
+		canvas.drawRoundRect(rectSubText, 20, 20, subTextBGPaint);
+		canvas.translate(centered, textHeight + textPadding);
 		subTextLayout.draw(canvas);
+		canvas.restore();
 	}
-//	titleText = (TextView) findViewById(R.id.textView_titleText);
-//	
-//	titleText.setText("The Prophecy says...");
-	
-//		
-//		Paint.FontMetrics fm = subTextBGPaint.getFontMetrics();
-//		float height = fm.descent - fm.ascent;	// height of font text
-//		rectSubText = new RectF();
-//		rectSubText.
-	
-	
-	
-	
 }

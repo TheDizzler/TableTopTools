@@ -19,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
+            android:layout_weight="1"
             android:checked="true"
             android:text="Adjective"
             android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -95,6 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
+            android:layout_weight="1"
             android:text="Verb"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -139,7 +141,8 @@
             android:layout_weight="1"
             android:text="Not Implemented!"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-        <ImageView
+
+        <ImageView
             android:id="@+id/lockBtn_resultAdverb"
             android:layout_width="32dp"
             android:layout_height="match_parent"
