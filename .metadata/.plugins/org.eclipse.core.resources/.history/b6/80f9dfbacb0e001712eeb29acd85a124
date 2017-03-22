@@ -1,0 +1,112 @@
+package fabulousoft.rpgtools.fragments;
+
+import fabulousoft.rpgtools.R;
+import android.app.Fragment;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+
+
+public class ProphecyView extends LinearLayout {
+	
+	TextView		titleText;
+	
+	String			text	= "Test";
+	String			subText	= "Noun";
+	Paint			textBGColor;
+	Paint			subTextBGPaint;
+	
+	
+	RectF			rectSubText;
+	Paint			rectSubPaint;
+	
+	private float	centerX;
+	private float	centerY;
+	private float	radius;
+	
+	
+	public ProphecyView(Context context) {
+	
+		super(context, null);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs) {
+	
+		super(context, attrs);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+	}
+	
+	
+	private void initPaints() {
+	
+		textBGColor = new Paint(Paint.ANTI_ALIAS_FLAG);
+		textBGColor.setStyle(Paint.Style.FILL);
+		textBGColor.setColor(Color.YELLOW);
+		
+		
+		subTextBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		subTextBGPaint.setStyle(Paint.Style.STROKE);
+		subTextBGPaint.setStrokeWidth(16 * getResources().getDisplayMetrics().density);
+		subTextBGPaint.setStrokeCap(Paint.Cap.ROUND);
+	}
+	
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	
+		int w = MeasureSpec.getSize(widthMeasureSpec);
+		int h = MeasureSpec.getSize(heightMeasureSpec);
+		
+		setMeasuredDimension(w, h);
+	}
+	
+	
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+	
+		centerX = w / 2f;
+		centerY = h / 2f;
+		radius = Math.min(w, h) / 2f;
+	}
+	
+	
+	@Override
+	public void onDraw(Canvas canvas) {
+	
+//		canvas.drawRoundRect(rectSubText, 16, 16, rectSubColor)
+//		canvas.drawRect(rectSubText, subTextBGPaint);
+	}
+	
+//	titleText = (TextView) findViewById(R.id.textView_titleText);
+//	
+//	titleText.setText("The Prophecy says...");
+	
+//		
+//		Paint.FontMetrics fm = subTextBGPaint.getFontMetrics();
+//		float height = fm.descent - fm.ascent;	// height of font text
+//		rectSubText = new RectF();
+//		rectSubText.
+	
+	
+	
+	
+}

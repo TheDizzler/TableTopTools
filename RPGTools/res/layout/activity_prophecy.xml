@@ -16,6 +16,11 @@
         android:layout_height="wrap_content"
         android:text="[Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb]." />
 
+    <fabulousoft.rpgtools.fragments.ProphecyView
+        android:id="@+id/prophecyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btn_Generate"
         android:layout_width="wrap_content"
@@ -33,7 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-
 
             <TabWidget
                 android:id="@android:id/tabs"
@@ -75,5 +79,6 @@
             </FrameLayout>
         </LinearLayout>
     </TabHost>
+
 
 </LinearLayout>

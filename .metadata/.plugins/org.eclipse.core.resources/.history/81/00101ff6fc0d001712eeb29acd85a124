@@ -1,0 +1,60 @@
+package fabulousoft.rpgtools.fragments;
+
+import fabulousoft.rpgtools.R;
+import android.app.Fragment;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+
+
+public class ProphecyView extends View {
+	
+	TextView titleText;
+	
+	String	text	= "Test";
+	String	subText	= "Noun";
+	Paint	textBGColor;
+	Paint	subTextBGPaint;
+	
+	
+	RectF	rectSubText;
+	Paint	rectSubPaint;
+	
+	
+	public ProphecyView(Context context) {
+	
+		super(context);
+		
+		titleText = (TextView) findViewById(R.id.textView_titleText);
+		titleText.setText("The Prophecy says...");
+		titleText.setBackgroundColor(Color.MAGENTA);
+		
+		subTextBGPaint = new Paint();
+		subTextBGPaint.setColor(Color.GREEN);
+		subTextBGPaint.setAntiAlias(true);
+		subTextBGPaint.setTextSize(16 * getResources().getDisplayMetrics().density);
+		
+		Paint.FontMetrics fm = subTextBGPaint.getFontMetrics();
+		float height = fm.descent - fm.ascent;	// height of font text
+		rectSubText = new RectF();
+		rectSubText.
+		
+	}
+	
+	
+//	@Override public void onDraw(Canvas canvas) {
+		
+//		canvas.drawRoundRect(rectSubText, 16, 16, rectSubColor)
+//		canvas.drawRect(rectSubText, subTextBGPaint);
+//	}
+	
+}
