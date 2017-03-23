@@ -14,84 +14,35 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-//import fabulousoft.rpgtools.R;
+import fabulousoft.rpgtools.fragments.ProphecyView;
+import fabulousoft.rpgtools.objects.Adjective;
+import fabulousoft.rpgtools.objects.Conjunction;
+import fabulousoft.rpgtools.objects.Noun;
+import fabulousoft.rpgtools.objects.Verb;
+import fabulousoft.rpgtools.objects.Word;
+
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.ViewFlipper;
-
-
-class Noun {
-	
-	String	single;
-	String	plural;
-	
-	
-	public Noun(String wordString) {
-	
-		String[] words = wordString.split("/");
-		single = words[0];
-		if (words.length > 1)
-			plural = words[1];
-		else
-			plural = single + "s";
-//		Log.w("Noun:", wordString + " -> " + single + " + " + plural);
-	}
-}
-
-class Verb {
-	
-	String	baseForm;
-	String	sForm;
-	String	ingForm;
-	String	pastForm;
-	String	pastParticleForm;
-	
-	
-	public Verb(String wordString) {
-	
-		String[] words = wordString.split("/");
-		baseForm = words[0];
-		if (words.length > 1) {
-			sForm = words[1];
-			
-		} else
-			sForm = wordString + "s";
-		
-		
-	}
-	
-}
 
 
 
@@ -103,74 +54,74 @@ class Prophecy {
 	 * 		(RESULT)	the [gelatinous] [princess] shall [mistakenly] [venture].
 	 * 						  3rd adj	  3rd noun			adverb		 2nd verb
 	 * */
-	private String				fullProphecy;
+	private String					fullProphecy;
 	
 	
 	/* Example sentence:
 	 * [Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb].
 	 */
-	private String				conjunction				= "[Conjunction]";
-	private String				causePrimaryAdjective	= "[adjective]";
-	private Noun				causePrimaryNoun		= new Noun("[noun]");
-	private String				causeSecondaryAdjective	= "[adjective]";
-	private Noun				causeSecondaryNoun		= new Noun("[noun]");
-	private Verb				causeVerb				= new Verb("[verb]");
+	private Conjunction				conjunction				= new Conjunction("[Conjunction]");
+	private Adjective				causePrimaryAdjective	= new Adjective("[adjective]");
+	private Noun					causePrimaryNoun		= new Noun("[noun]");
+	private Adjective				causeSecondaryAdjective	= new Adjective("[adjective]");
+	private Noun					causeSecondaryNoun		= new Noun("[noun]");
+	private Verb					causeVerb				= new Verb("[verb]");
 	
-	private String				resultAdjective			= "[adjective]";
-	private Noun				resultNoun				= new Noun("[noun]");
-	private String				adverb					= "[adverb]ally";
-	private Verb				resultVerb				= new Verb("[verb]");
+	private Adjective				resultAdjective			= new Adjective("[adjective]");
+	private Noun					resultNoun				= new Noun("[noun]");
+	private String					adverb					= "[adverb]ally";
+	private Verb					resultVerb				= new Verb("[verb]");
 	
-	Random						rand					= new Random();
+	Random							rand					= new Random();
 	
-	private ArrayList<String>	conjunctionList			= new ArrayList<String>();
-	private ArrayList<String>	conjunctionSpecialList	= new ArrayList<String>();
-	private ArrayList<Noun>		nounCommonList			= new ArrayList<Noun>();
-	private ArrayList<Noun>		nounProperList			= new ArrayList<Noun>();
-	private ArrayList<Verb>		verbList				= new ArrayList<Verb>();
-	private ArrayList<String>	adjectiveList			= new ArrayList<String>();
+	private ArrayList<Conjunction>	conjunctionList			= new ArrayList<Conjunction>();
+	private ArrayList<Conjunction>	conjunctionSpecialList	= new ArrayList<Conjunction>();
+	private ArrayList<Noun>			nounCommonList			= new ArrayList<Noun>();
+	private ArrayList<Noun>			nounProperList			= new ArrayList<Noun>();
+	private ArrayList<Verb>			verbList				= new ArrayList<Verb>();
+	private ArrayList<Adjective>	adjectiveList			= new ArrayList<Adjective>();
 	
 	
 	
-	TextView					propheticText;
+	TextView						propheticText;
 	
 	/* Cause Controls */
-	ImageView					lockBtnConjunction;
-	Spinner						spinnerConj;
-	Switch						switchPrimaryAdjective;
-	ImageView					lockBtnPrimaryAdj;
-	ToggleButton				toggleBtnPrimaryNounPlural;
-	ToggleButton				toggleBtnPrimaryNounProper;
-	ImageView					lockBtnPrimaryNoun;
-	Switch						switchSecondaryNoun;
-	ToggleButton				toggleBtnSecondaryNounProper;
-	ToggleButton				toggleBtnSecondaryNounPlural;
-	ImageView					lockBtnSecondaryNoun;
-	Switch						switchSecondaryAdjective;
-	ImageView					lockBtnSecondaryAdjective;
-	ImageView					lockBtnCauseVerb;
+	ImageView						lockBtnConjunction;
+	Spinner							spinnerConj;
+	Switch							switchPrimaryAdjective;
+	ImageView						lockBtnPrimaryAdj;
+	ToggleButton					toggleBtnPrimaryNounPlural;
+	ToggleButton					toggleBtnPrimaryNounProper;
+	ImageView						lockBtnPrimaryNoun;
+	Switch							switchSecondaryNoun;
+	ToggleButton					toggleBtnSecondaryNounProper;
+	ToggleButton					toggleBtnSecondaryNounPlural;
+	ImageView						lockBtnSecondaryNoun;
+	Switch							switchSecondaryAdjective;
+	ImageView						lockBtnSecondaryAdjective;
+	ImageView						lockBtnCauseVerb;
 	
 	/* Result Controls */
-	Switch						switchResultAdjective;
-	ImageView					lockBtnResultAdjective;
-	ToggleButton				toggleBtnResultNounProper;
-	ToggleButton				toggleBtnResultNounPlural;
-	ImageView					lockBtnResultNoun;
-	ImageView					lockBtnResultVerb;
+	Switch							switchResultAdjective;
+	ImageView						lockBtnResultAdjective;
+	ToggleButton					toggleBtnResultNounProper;
+	ToggleButton					toggleBtnResultNounPlural;
+	ImageView						lockBtnResultNoun;
+	ImageView						lockBtnResultVerb;
 	
 	
-	boolean						conjunctionLocked		= false;
-	boolean						primaryNounLocked		= false;
-	boolean						primaryAdjLocked		= false;
-	boolean						secondaryNounLocked		= false;
-	boolean						secondaryAdjLocked		= false;
-	boolean						causeVerbLocked			= false;
+	boolean							conjunctionLocked		= false;
+	boolean							primaryNounLocked		= false;
+	boolean							primaryAdjLocked		= false;
+	boolean							secondaryNounLocked		= false;
+	boolean							secondaryAdjLocked		= false;
+	boolean							causeVerbLocked			= false;
 	
-	boolean						resultAdjLocked			= false;
-	boolean						resultNounLocked		= false;
-	boolean						resultVerbLocked		= false;
+	boolean							resultAdjLocked			= false;
+	boolean							resultNounLocked		= false;
+	boolean							resultVerbLocked		= false;
 	
-	
+	ProphecyView					prophecyView;
 	
 	
 	public Prophecy(Activity activity) {
@@ -191,14 +142,14 @@ class Prophecy {
 			Element normalNode = (Element) conjunctionsNode.getElementsByTagName("normal").item(0);
 			String newWords = normalNode.getTextContent().trim();
 			for (String word : newWords.split("\\s+")) {
-				conjunctionList.add(word);
+				conjunctionList.add(new Conjunction(word));
 			}
 			
 			Element specialConjNode = (Element) conjunctionsNode
 				.getElementsByTagName("special").item(0);
 			newWords = specialConjNode.getTextContent().trim();
 			for (String word : newWords.split("\\s+")) {
-				conjunctionSpecialList.add(word);
+				conjunctionSpecialList.add(new Conjunction(word));
 			}
 			
 			Element nounsNode = (Element) rootNode.getElementsByTagName("nouns").item(0);
@@ -225,7 +176,7 @@ class Prophecy {
 			Element adjNode = (Element) rootNode.getElementsByTagName("adjectives").item(0);
 			newWords = adjNode.getTextContent().trim();
 			for (String word : newWords.split("\\s+")) {
-				adjectiveList.add(word);
+				adjectiveList.add(new Adjective(word));
 			}
 			
 		} catch (IOException e) {
@@ -246,6 +197,8 @@ class Prophecy {
 	
 	private void initComponents(final Activity activity) {
 	
+		prophecyView = (ProphecyView) activity.findViewById(R.id.prophecyView);
+		
 		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
 		
 		/* Cause Controls */
@@ -284,7 +237,7 @@ class Prophecy {
 		});
 		
 		
-		ArrayAdapter<String> conjAdap = new ArrayAdapter<String>(activity,
+		ArrayAdapter<Conjunction> conjAdap = new ArrayAdapter<Conjunction>(activity,
 			android.R.layout.simple_spinner_dropdown_item, conjunctionList);
 		spinnerConj.setAdapter(conjAdap);
 		spinnerConj.setEnabled(false);
@@ -293,7 +246,7 @@ class Prophecy {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			
-				conjunction = (String) spinnerConj.getSelectedItem();
+				conjunction = (Conjunction) spinnerConj.getSelectedItem();
 				reconstructProphecy();
 			}
 			
@@ -560,7 +513,7 @@ class Prophecy {
 	
 		
 		if (conjunctionLocked)
-			conjunction = (String) spinnerConj.getSelectedItem();
+			conjunction = (Conjunction) spinnerConj.getSelectedItem();
 		else
 			conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
 		
@@ -600,6 +553,8 @@ class Prophecy {
 	
 	public void reconstructProphecy() {
 	
+		prophecyView.reset();
+		
 		reconstructCause();
 		fullProphecy += ", ";
 		reconstrucResult();
@@ -612,22 +567,21 @@ class Prophecy {
 	
 	private void reconstructCause() {
 	
-		fullProphecy = firstCharToUpper(conjunction);
+		fullProphecy = firstCharToUpper(conjunction.toString());
 		fullProphecy += " ";
 		if (toggleBtnPrimaryNounProper.isChecked())
 			fullProphecy += "The ";
 		else
 			fullProphecy += "the ";
 		
-		propheticText.setText(fullProphecy);
 		if (switchPrimaryAdjective.isChecked()) {
 			if (toggleBtnPrimaryNounProper.isChecked())
-				fullProphecy += firstCharToUpper(causePrimaryAdjective) + " ";
+				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString()) + " ";
 			else
 				fullProphecy += causePrimaryAdjective + " ";
 		}
 		
-		
+		prophecyView.addWord(causePrimaryAdjective);
 		if (toggleBtnPrimaryNounPlural.isChecked()) {
 			if (toggleBtnPrimaryNounProper.isChecked())
 				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
@@ -647,7 +601,7 @@ class Prophecy {
 			
 			if (switchSecondaryAdjective.isChecked()) {
 				if (toggleBtnSecondaryNounProper.isChecked())
-					fullProphecy += firstCharToUpper(causeSecondaryAdjective);
+					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
 				else
 					fullProphecy += causeSecondaryAdjective;
 			}
@@ -687,10 +641,10 @@ class Prophecy {
 			fullProphecy += "the";
 		
 		fullProphecy += " ";
-				
+		
 		if (switchResultAdjective.isChecked()) {
 			if (toggleBtnResultNounProper.isChecked())
-				fullProphecy += firstCharToUpper(resultAdjective);
+				fullProphecy += firstCharToUpper(resultAdjective.toString());
 			else
 				fullProphecy += resultAdjective;
 			
@@ -729,10 +683,11 @@ class Prophecy {
 
 public class ProphecyActivity extends Activity {
 	
+	/** Temporary prophecy holder. */
+	Prophecy		prophecyText;
+	TabHost			tabHost;
 	
-	Prophecy	prophecy;
-	TabHost		tabHost;
-	
+//	ProphecyView	prophecyView;
 	
 	
 	@Override
@@ -741,7 +696,7 @@ public class ProphecyActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_prophecy);
 		
-		prophecy = new Prophecy(this);
+		prophecyText = new Prophecy(this);
 		
 		
 		tabHost = (TabHost) findViewById(R.id.tabhost);
@@ -790,8 +745,9 @@ public class ProphecyActivity extends Activity {
 	}
 	
 	
-	@Override public void onResume() {
-		
+	@Override
+	public void onResume() {
+	
 		super.onResume();
 		
 		TextView tv = (TextView) tabHost.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
@@ -861,7 +817,7 @@ public class ProphecyActivity extends Activity {
 	
 	private void generateRandomProphecy() {
 	
-		prophecy.generateFullProphecy();
+		prophecyText.generateFullProphecy();
 	}
 	
 	

@@ -1,0 +1,14 @@
+package fabulousoft.rpgtools.objects;
+
+
+public class Conjunction implements Word {
+	
+	String base;
+	
+	
+	public Conjunction(String conj) {
+		
+		
+	}
+	
+}

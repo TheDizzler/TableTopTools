@@ -1,0 +1,7 @@
+package fabulousoft.rpgtools.objects;
+
+
+
+public interface Word {
+	
+}

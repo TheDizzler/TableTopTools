@@ -1,0 +1,19 @@
+package fabulousoft.rpgtools.objects;
+
+
+public class Noun implements Word {
+	
+	public String	single;
+	public String	plural;
+	
+	
+	public Noun(String wordString) {
+	
+		String[] words = wordString.split("/");
+		single = words[0];
+		if (words.length > 1)
+			plural = words[1];
+		else
+			plural = single + "s";
+	}
+}

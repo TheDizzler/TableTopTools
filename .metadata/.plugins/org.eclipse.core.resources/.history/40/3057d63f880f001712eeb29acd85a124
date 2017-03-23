@@ -1,0 +1,31 @@
+package fabulousoft.rpgtools.objects;
+
+
+
+public interface Word {
+	
+}
+
+class Verb implements Word {
+	
+	String	baseForm;
+	String	sForm;
+	String	ingForm;
+	String	pastForm;
+	String	pastParticleForm;
+	
+	
+	public Verb(String wordString) {
+	
+		String[] words = wordString.split("/");
+		baseForm = words[0];
+		if (words.length > 1) {
+			sForm = words[1];
+			
+		} else
+			sForm = wordString + "s";
+		
+		
+	}
+	
+}

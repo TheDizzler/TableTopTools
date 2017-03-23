@@ -1,6 +1,15 @@
 package fabulousoft.rpgtools.fragments;
 
+import java.util.ArrayList;
+
 import fabulousoft.rpgtools.R;
+import fabulousoft.rpgtools.ProphecyActivity;
+import fabulousoft.rpgtools.objects.Adjective;
+import fabulousoft.rpgtools.objects.Article;
+import fabulousoft.rpgtools.objects.Conjunction;
+import fabulousoft.rpgtools.objects.Noun;
+import fabulousoft.rpgtools.objects.Verb;
+import fabulousoft.rpgtools.objects.Word;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,8 +26,69 @@ import android.widget.LinearLayout;
 
 
 
-public class ProphecyView extends View {
+public class ProphecyView extends LinearLayout {
 	
+	ArrayList<WordView>	wordList	= new ArrayList<WordView>();
+	
+	
+	public ProphecyView(Context context) {
+	
+		this(context, null);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+	}
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		for (WordView word : wordList)
+			word.measure(widthMeasureSpec, heightMeasureSpec);
+		
+	}
+	
+	
+	public void reset() {
+	
+		wordList.clear();
+	}
+	
+	
+//	@Override
+//	public void onDraw(Canvas canvas) {
+//	super.onDraw(canvas);
+//		for (WordView word : wordList)
+//			word.draw(canvas);
+//	}
+	
+	
+	public void addWord(Word newWord) {
+	
+		WordView wordView = new WordView(getContext());
+		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		wordView.setText(newWord);
+		this.addView(wordView);
+		wordList.add(wordView);
+	}
+	
+}
+
+
+
+class WordView extends View {
 	
 	String			text		= "Pepe";
 	TextPaint		textPaint;
@@ -48,20 +118,20 @@ public class ProphecyView extends View {
 	
 	
 	
-	public ProphecyView(Context context) {
+	public WordView(Context context) {
 	
 		this(context, null);
 		
 	}
 	
 	
-	public ProphecyView(Context context, AttributeSet attrs) {
+	public WordView(Context context, AttributeSet attrs) {
 	
 		this(context, attrs, 0);
 	}
 	
 	
-	public ProphecyView(Context context, AttributeSet attrs, int defStyleAttr) {
+	public WordView(Context context, AttributeSet attrs, int defStyleAttr) {
 	
 		super(context, attrs, defStyleAttr);
 		
@@ -101,10 +171,46 @@ public class ProphecyView extends View {
 	}
 	
 	
+	public void setText(Word word) {
+	
+		subText = word.wordType();
+		switch (subText) {
+			case "Verb":
+				text = ((Verb) word).baseForm;
+				subTextBGPaint.setColor(Color.GREEN);
+				break;
+			case "Noun":
+				text = ((Noun) word).single;
+				subTextBGPaint.setColor(Color.BLUE);
+				break;
+			case "Conjunction":
+				text = ((Conjunction) word).baseForm;
+				subTextBGPaint.setColor(Color.YELLOW);
+				break;
+			case "Adjective":
+				text = ((Adjective) word).baseForm;
+				subTextBGPaint.setColor(Color.MAGENTA);
+				break;
+			default:
+				text = ((Article) word).baseForm;
+				subTextBGPaint.setColor(Color.TRANSPARENT);
+				subText = "";
+				break;
+		}
+		textWidth = (int) textPaint.measureText(text);
+		textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+		subTextLayout = new StaticLayout(subText, subTextPaint, (int) subTextPaint.measureText(subText), Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+		
+//		invalidate();
+//		postInvalidate();
+		requestLayout();
+//		forceLayout();
+	}
+	
+	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 	
-		
 		
 		textWidth = (int) textPaint.measureText(text);
 		textHeight = textLayout.getHeight();

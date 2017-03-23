@@ -1,0 +1,12 @@
+package fabulousoft.rpgtools.objects;
+
+
+public class Article implements Word {
+
+	@Override
+	public String wordType() {
+	
+		return "Article";
+	}
+	
+}

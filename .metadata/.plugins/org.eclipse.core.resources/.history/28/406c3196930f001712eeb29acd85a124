@@ -1,0 +1,27 @@
+package fabulousoft.rpgtools.objects;
+
+
+public class Adjective implements Word {
+	
+	String	base;
+	
+	
+	public Adjective(String adj) {
+	
+		base = adj;
+	}
+	
+	
+	@Override
+	public String toString() {
+	
+		return base;
+	}
+
+
+	@Override
+	public String wordType() {
+	
+		return "Adjective";
+	}
+}
