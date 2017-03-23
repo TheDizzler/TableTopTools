@@ -19,8 +19,6 @@ public class Verb implements Word {
 			
 		} else
 			sForm = wordString + "s";
-		
-		
 	}
 
 

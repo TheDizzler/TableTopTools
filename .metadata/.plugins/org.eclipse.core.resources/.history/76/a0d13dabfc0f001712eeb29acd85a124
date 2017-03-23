@@ -1,0 +1,1260 @@
+package fabulousoft.rpgtools.fragments;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
+import fabulousoft.rpgtools.R;
+import fabulousoft.rpgtools.ProphecyActivity;
+import fabulousoft.rpgtools.objects.Adjective;
+import fabulousoft.rpgtools.objects.Article;
+import fabulousoft.rpgtools.objects.Conjunction;
+import fabulousoft.rpgtools.objects.Noun;
+import fabulousoft.rpgtools.objects.Verb;
+import fabulousoft.rpgtools.objects.Word;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.text.DynamicLayout;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+import android.widget.AdapterView.OnItemSelectedListener;
+
+
+
+public class ProphecyView extends LinearLayout {
+	
+	ArrayList<WordView>				wordList				= new ArrayList<WordView>();
+	
+	private ConjunctionView			conjunction;
+	private AdjectiveView			causePrimaryAdjective;
+	private NounView				causePrimaryNoun;
+	private AdjectiveView			causeSecondaryAdjective;
+	private NounView				causeSecondaryNoun;
+	private VerbView				causeVerb;
+	
+	private AdjectiveView			resultAdjective;
+	private NounView				resultNoun;
+	private String					adverb					= "[adverb]ally";
+	private VerbView				resultVerb;
+	
+//	private Conjunction				conjunction				= new Conjunction("[Conjunction]");
+//	private Adjective				causePrimaryAdjective	= new Adjective("[adjective]");
+//	private Noun					causePrimaryNoun		= new Noun("[noun]");
+//	private Adjective				causeSecondaryAdjective	= new Adjective("[adjective]");
+//	private Noun					causeSecondaryNoun		= new Noun("[noun]");
+//	private Verb					causeVerb				= new Verb("[verb]");
+//	
+//	private Adjective				resultAdjective			= new Adjective("[adjective]");
+//	private Noun					resultNoun				= new Noun("[noun]");
+//	private String					adverb					= "[adverb]ally";
+//	private Verb					resultVerb				= new Verb("[verb]");
+	
+	
+	Random							rand					= new Random();
+	
+	private ArrayList<Conjunction>	conjunctionList			= new ArrayList<Conjunction>();
+	private ArrayList<Conjunction>	conjunctionSpecialList	= new ArrayList<Conjunction>();
+	private ArrayList<Noun>			nounCommonList			= new ArrayList<Noun>();
+	private ArrayList<Noun>			nounProperList			= new ArrayList<Noun>();
+	private ArrayList<Verb>			verbList				= new ArrayList<Verb>();
+	private ArrayList<Adjective>	adjectiveList			= new ArrayList<Adjective>();
+	
+	
+	
+	TextView						propheticText;
+	
+	/* Cause Controls */
+	ImageView						lockBtnConjunction;
+	Spinner							spinnerConj;
+	Switch							switchPrimaryAdjective;
+	ImageView						lockBtnPrimaryAdj;
+	ToggleButton					toggleBtnPrimaryNounPlural;
+	ToggleButton					toggleBtnPrimaryNounProper;
+	ImageView						lockBtnPrimaryNoun;
+	Switch							switchSecondaryNoun;
+	ToggleButton					toggleBtnSecondaryNounProper;
+	ToggleButton					toggleBtnSecondaryNounPlural;
+	ImageView						lockBtnSecondaryNoun;
+	Switch							switchSecondaryAdjective;
+	ImageView						lockBtnSecondaryAdjective;
+	ImageView						lockBtnCauseVerb;
+	
+	/* Result Controls */
+	Switch							switchResultAdjective;
+	ImageView						lockBtnResultAdjective;
+	ToggleButton					toggleBtnResultNounProper;
+	ToggleButton					toggleBtnResultNounPlural;
+	ImageView						lockBtnResultNoun;
+	ImageView						lockBtnResultVerb;
+	
+	
+	boolean							conjunctionLocked		= false;
+	boolean							primaryNounLocked		= false;
+	boolean							primaryAdjLocked		= false;
+	boolean							secondaryNounLocked		= false;
+	boolean							secondaryAdjLocked		= false;
+	boolean							causeVerbLocked			= false;
+	
+	boolean							resultAdjLocked			= false;
+	boolean							resultNounLocked		= false;
+	boolean							resultVerbLocked		= false;
+	
+	
+	
+	public ProphecyView(Context context) {
+	
+		this(context, null);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public ProphecyView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+	}
+	
+	
+	public void initialize(Activity activity) {
+	
+		try {
+			
+			InputStream is = activity.getAssets().open("WordList.xml");
+			Document xmlDoc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(is);
+			
+			is.close();
+			
+			Element rootNode = xmlDoc.getDocumentElement();
+			rootNode.normalize();
+			
+			Element conjunctionsNode = (Element) rootNode.getElementsByTagName("conjunctions").item(0);
+			
+			Element normalNode = (Element) conjunctionsNode.getElementsByTagName("normal").item(0);
+			String newWords = normalNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				conjunctionList.add(new Conjunction(word));
+			}
+			
+			Element specialConjNode = (Element) conjunctionsNode
+				.getElementsByTagName("special").item(0);
+			newWords = specialConjNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				conjunctionSpecialList.add(new Conjunction(word));
+			}
+			
+			Element nounsNode = (Element) rootNode.getElementsByTagName("nouns").item(0);
+			Element commonNounNode = (Element) nounsNode.getElementsByTagName("common").item(0);
+			newWords = commonNounNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				nounCommonList.add(new Noun(word));
+			}
+			
+			Element properNounNode = (Element) nounsNode.getElementsByTagName("proper").item(0);
+			newWords = properNounNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				nounProperList.add(new Noun(word));
+//						Log.e("Check", word + " WOW");
+			}
+			
+			Element verbsNode = (Element) rootNode.getElementsByTagName("verbs").item(0);
+			newWords = verbsNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				verbList.add(new Verb(word));
+			}
+			
+			
+			Element adjNode = (Element) rootNode.getElementsByTagName("adjectives").item(0);
+			newWords = adjNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				adjectiveList.add(new Adjective(word));
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (SAXException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		
+		initComponents(activity);
+		
+	}
+	
+	
+	private void initComponents(final Activity activity) {
+	
+		
+		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
+		
+		
+		conjunction = new ConjunctionView(getContext());
+		conjunction.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		conjunction.setWord(new Conjunction("[Conjunction]"));
+		
+		causePrimaryAdjective = new AdjectiveView(getContext());
+		causePrimaryAdjective.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		causePrimaryAdjective.setWord(new Adjective("[adjective]"));
+		
+		causePrimaryNoun = new NounView(getContext());
+		causePrimaryNoun.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		causePrimaryNoun.setWord(new Noun("[noun]"));
+		
+		causeSecondaryAdjective = new AdjectiveView(getContext());
+		causeSecondaryAdjective.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		causeSecondaryAdjective.setWord(new Adjective("[adjective]"));
+		
+		causeSecondaryNoun = new NounView(getContext());
+		causeSecondaryNoun.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		causeSecondaryNoun.setWord(new Noun("[noun]"));
+		
+		
+		causeVerb = new VerbView(getContext());
+		causeVerb.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		causeVerb.setWord(new Verb("[verb]"));
+		
+		
+		
+		resultNoun = new NounView(getContext());
+		resultNoun.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		resultNoun.setWord(new Noun("[noun]"));
+		
+		resultAdjective = new AdjectiveView(getContext());
+		resultAdjective.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		resultAdjective.setWord(new Adjective("[adjective]"));
+		
+		
+		resultVerb = new VerbView(getContext());
+		resultVerb.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		resultVerb.setWord(new Verb("[verb]"));
+		
+		
+		/* Cause Controls */
+		lockBtnConjunction = (ImageView) activity.findViewById(R.id.lockBtn_conj);
+		spinnerConj = (Spinner) activity.findViewById(R.id.spinner_Conjunctions);
+		switchPrimaryAdjective = (Switch) activity.findViewById(R.id.switch_primaryAdjective);
+		lockBtnPrimaryAdj = (ImageView) activity.findViewById(R.id.lockBtn_primaryAdj);
+		toggleBtnPrimaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounPlural);
+		toggleBtnPrimaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounProper);
+		lockBtnPrimaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_primaryNoun);
+		
+		switchSecondaryNoun = (Switch) activity.findViewById(R.id.switch_secondaryNoun);
+		toggleBtnSecondaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounProper);
+		toggleBtnSecondaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounPlural);
+		lockBtnSecondaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_secondaryNoun);
+		switchSecondaryAdjective = (Switch) activity.findViewById(R.id.switch_secondaryAdjective);
+		lockBtnSecondaryAdjective = (ImageView) activity.findViewById(R.id.lockBtn_secondaryAdjective);
+		lockBtnCauseVerb = (ImageView) activity.findViewById(R.id.lockBtn_causeVerb);
+		
+		
+		lockBtnConjunction.setOnClickListener(new OnClickListener() {
+			
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				conjunctionLocked = !conjunctionLocked;
+				if (conjunctionLocked) {
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+				spinnerConj.setEnabled(conjunctionLocked);
+			}
+		});
+		
+		
+		ArrayAdapter<Conjunction> conjAdap = new ArrayAdapter<Conjunction>(activity,
+			android.R.layout.simple_spinner_dropdown_item, conjunctionList);
+		spinnerConj.setAdapter(conjAdap);
+		spinnerConj.setEnabled(false);
+		spinnerConj.setOnItemSelectedListener(new OnItemSelectedListener() {
+			
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			
+				conjunction = (Conjunction) spinnerConj.getSelectedItem();
+				reconstructProphecy();
+			}
+			
+			
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			
+			}
+		});
+		
+		lockBtnConjunction.callOnClick();
+		
+		switchPrimaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!primaryAdjLocked)
+					causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnPrimaryAdj.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryAdjLocked = !primaryAdjLocked;
+				if (primaryAdjLocked)
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		toggleBtnPrimaryNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		toggleBtnPrimaryNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!primaryNounLocked) {
+					if (toggleBtnPrimaryNounProper.isChecked())
+						causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnPrimaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryNounLocked = !primaryNounLocked;
+				if (primaryNounLocked) {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+			}
+		});
+		
+		
+		switchSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryAdjective.isChecked() && !secondaryAdjLocked) {
+					causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryAdjLocked = !secondaryAdjLocked;
+				if (secondaryAdjLocked)
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+			}
+		});
+		
+		
+		switchSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryNoun.isChecked() && !secondaryNounLocked)
+					causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				switchSecondaryAdjective.setEnabled(switchSecondaryNoun.isChecked());
+				
+				reconstructProphecy();
+			}
+			
+			
+		});
+		
+		toggleBtnSecondaryNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!secondaryNounLocked) {
+					if (toggleBtnSecondaryNounProper.isChecked())
+						causeSecondaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+			
+			
+		});
+		
+		toggleBtnSecondaryNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryNounLocked = !secondaryNounLocked;
+				if (secondaryNounLocked)
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		lockBtnCauseVerb.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				causeVerbLocked = !causeVerbLocked;
+				if (causeVerbLocked)
+					lockBtnCauseVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnCauseVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		/* Result controls */
+		switchResultAdjective = (Switch) activity.findViewById(R.id.switch_resultAdjective);
+		lockBtnResultAdjective = (ImageView) activity.findViewById(R.id.lockBtn_resultAdjective);
+		toggleBtnResultNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultProperNoun);
+		toggleBtnResultNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultNounPlural);
+		lockBtnResultNoun = (ImageView) activity.findViewById(R.id.lockBtn_resultNoun);
+		lockBtnResultVerb = (ImageView) activity.findViewById(R.id.lockBtn_resultVerb);
+		
+		switchResultAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (switchResultAdjective.isChecked() && !resultAdjLocked)
+					resultAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnResultAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultAdjLocked = !resultAdjLocked;
+				if (resultAdjLocked)
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		
+		toggleBtnResultNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (!resultNounLocked) {
+					if (toggleBtnResultNounProper.isChecked())
+						resultNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						resultNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		toggleBtnResultNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnResultNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultNounLocked = !resultNounLocked;
+				if (resultNounLocked)
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		lockBtnResultVerb.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultVerbLocked = !resultVerbLocked;
+				if (resultVerbLocked)
+					lockBtnResultVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+	}
+	
+	
+	public void generateFullProphecy() {
+	
+		
+		if (conjunctionLocked)
+			conjunction.setWord((Conjunction) spinnerConj.getSelectedItem());
+		else
+			conjunction.setWord(conjunctionList.get(rand.nextInt(conjunctionList.size())));
+		
+		
+		if (!primaryAdjLocked)
+			causePrimaryAdjective.setWord(
+				adjectiveList.get(rand.nextInt(adjectiveList.size())));
+		
+		if (!primaryNounLocked) {
+			if (toggleBtnPrimaryNounProper.isChecked())
+				causePrimaryNoun.setWord(
+					nounProperList.get(rand.nextInt(nounProperList.size())));
+			else
+				causePrimaryNoun.setWord(
+					nounCommonList.get(rand.nextInt(nounCommonList.size())));
+		}
+		
+		if (!secondaryAdjLocked)
+			causeSecondaryAdjective.setWord(
+				adjectiveList.get(rand.nextInt(adjectiveList.size())));
+		if (!secondaryNounLocked)
+			causeSecondaryNoun.setWord(
+				nounCommonList.get(rand.nextInt(nounCommonList.size())));
+		
+		if (!causeVerbLocked)
+			causeVerb.setWord(verbList.get(rand.nextInt(verbList.size())));
+		
+		if (!resultAdjLocked)
+			resultAdjective.setWord(
+				adjectiveList.get(rand.nextInt(adjectiveList.size())));
+		
+		if (!resultNounLocked) {
+			if (toggleBtnResultNounProper.isChecked())
+				resultNoun.setWord(
+					nounProperList.get(rand.nextInt(nounProperList.size())));
+			else
+				resultNoun.setWord(
+					nounCommonList.get(rand.nextInt(nounCommonList.size())));
+		}
+		if (!resultVerbLocked)
+			resultVerb.setWord(verbList.get(rand.nextInt(verbList.size())));
+		
+		reconstructProphecy();
+	}
+	
+	
+	public void reconstructProphecy() {
+	
+		reset();
+		
+		reconstructCause();
+		fullProphecy += ", ";
+		reconstrucResult();
+		// close prophecy
+		fullProphecy += ".";
+		
+		propheticText.setText(fullProphecy);
+	};
+	
+	Article	space	= new Article(" ");
+	Article	the		= new Article("the");
+	Article	of		= new Article("of");
+	Article	comma	= new Article(", ");
+	Article	period	= new Article(".");
+	
+	
+	private void reconstructCause() {
+	
+//		fullProphecy = firstCharToUpper(conjunction.toString());
+		addWord(conjunction);
+		conjunction.capitalize();
+//		fullProphecy += " ";
+		addWord(space);
+		
+//		String definiteArticle;
+		addWord(the);
+		if (toggleBtnPrimaryNounProper.isChecked())
+			wordList.get(wordList.size() - 1).capitalize();
+//			definiteArticle = "The ";
+//		else
+//			definiteArticle = "the ";
+		
+//		fullProphecy += definiteArticle;
+		
+		
+		if (switchPrimaryAdjective.isChecked()) {
+			addWord(causePrimaryAdjective);
+			if (toggleBtnPrimaryNounProper.isChecked())
+				causePrimaryAdjective.capitalize();
+//				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString()) + " ";
+//			else
+//				fullProphecy += causePrimaryAdjective + " ";
+			
+		}
+		
+		addWord(space);
+		
+		addWord(causePrimaryNoun);
+		if (toggleBtnPrimaryNounPlural.isChecked())
+			causePrimaryNoun.plural();
+		if (toggleBtnPrimaryNounProper.isChecked())
+//				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
+			causePrimaryNoun.capitalize();
+//			} else
+//				fullProphecy += causePrimaryNoun.plural;
+//		} else {
+//			if (toggleBtnPrimaryNounProper.isChecked())
+//				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
+//			else
+//				fullProphecy += causePrimaryNoun.single;
+//		}
+		
+//		fullProphecy += " ";
+		addWord(space);
+		
+		if (switchSecondaryNoun.isChecked()) {
+//			fullProphecy += "of ";
+			addWord(of);
+			addWord(space);
+			
+			if (switchSecondaryAdjective.isChecked()) {
+				addWord(causeSecondaryAdjective);
+				if (toggleBtnSecondaryNounProper.isChecked())
+					causeSecondaryAdjective.capitalize();
+//					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
+//				else
+//					fullProphecy += causeSecondaryAdjective;
+			}
+			
+			fullProphecy += " ";
+//			prophecyView.addWord(new Article(" "));
+			
+			if (toggleBtnSecondaryNounPlural.isChecked()) {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.plural);
+				else
+					fullProphecy += causeSecondaryNoun.plural;
+				
+			} else {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.single);
+				else
+					fullProphecy += causeSecondaryNoun.single;
+			}
+		}
+		fullProphecy += " ";
+//		prophecyView.addWord(new Article(" "));
+		
+		
+		if (toggleBtnPrimaryNounPlural.isChecked())
+			fullProphecy += causeVerb.baseForm;
+		else
+			fullProphecy += causeVerb.sForm;
+		
+	}
+	
+	
+	
+	private void reconstrucResult() {
+	
+		if (toggleBtnResultNounProper.isChecked())
+			fullProphecy += "The";
+		else
+			fullProphecy += "the";
+		
+		fullProphecy += " ";
+//		prophecyView.addWord(new Article(" "));
+		
+		if (switchResultAdjective.isChecked()) {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultAdjective.toString());
+			else
+				fullProphecy += resultAdjective;
+			
+			fullProphecy += " ";
+//			prophecyView.addWord(new Article(" "));
+		}
+		
+		if (toggleBtnResultNounPlural.isChecked()) {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.plural);
+			else
+				fullProphecy += resultNoun.plural;
+		} else {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.single);
+			else
+				fullProphecy += resultNoun.single;
+		}
+		
+		fullProphecy += " ";
+//		prophecyView.addWord(new Article(" "));
+		fullProphecy += "shall ";
+		fullProphecy += resultVerb.baseForm + " ";
+		fullProphecy += adverb;
+		
+	}
+	
+	
+	public static String firstCharToUpper(String change) {
+	
+		return change.substring(0, 1).toUpperCase() + change.substring(1);
+	}
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		for (WordView word : wordList)
+			word.measure(widthMeasureSpec, heightMeasureSpec);
+		
+	}
+	
+	
+	public void reset() {
+	
+		wordList.clear();
+	}
+	
+	
+//	@Override
+//	public void onDraw(Canvas canvas) {
+//	super.onDraw(canvas);
+//		for (WordView word : wordList)
+//			word.draw(canvas);
+//	}
+	
+	private void addWord(Article article) {
+	
+		WordView wordView = new ArticleView(getContext());
+		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		wordView.setWord(article);
+		this.addView(wordView);
+	}
+	
+	
+	public void addWord(WordView wordView) {
+	
+//		WordView wordView = new WordView(getContext());
+//		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+//			LinearLayout.LayoutParams.WRAP_CONTENT,
+//			LinearLayout.LayoutParams.WRAP_CONTENT));
+//		wordView.setWord(newWord);
+//		this.addView(wordView);
+		wordList.add(wordView);
+	}
+}
+
+
+class VerbView extends WordView {
+	
+	Verb	verb;
+	
+	
+	public VerbView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	public VerbView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public VerbView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+		initWord();
+	}
+	
+	
+	@Override
+	void initWord() {
+	
+		subTextBGPaint.setColor(Color.GREEN);
+	}
+	
+	
+	@Override
+	public void setWord(Word word) {
+	
+		verb = (Verb) word;
+		text = verb.baseForm;
+		subText = "Verb";
+		requestLayout();
+	}
+	
+}
+
+class NounView extends WordView {
+	
+	
+	public String	single;
+	public String	plural;
+	
+	public Noun		noun;
+	
+	
+	public NounView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	
+	
+	public NounView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public NounView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+		initWord();
+	}
+	
+	
+	@Override
+	void initWord() {
+	
+		subTextBGPaint.setColor(Color.BLUE);
+	}
+	
+	
+	@Override
+	public void setWord(Word word) {
+	
+		this.noun = (Noun) word;
+		text = noun.single;
+		subText = "Noun";
+		requestLayout();
+	}
+	
+	
+	public void plural() {
+	
+		text = noun.plural;
+		requestLayout();
+	}
+	
+}
+
+class ConjunctionView extends WordView {
+	
+	Conjunction	conjunction;
+	
+	
+	public ConjunctionView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	public ConjunctionView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public ConjunctionView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+		initWord();
+	}
+	
+	
+	
+	
+	@Override
+	void initWord() {
+	
+		subTextBGPaint.setColor(Color.YELLOW);
+	}
+	
+	
+	
+	@Override
+	public void setWord(Word word) {
+	
+		conjunction = (Conjunction) word;
+		text = conjunction.baseForm;
+		subText = "Conjunction";
+		requestLayout();
+	}
+	
+	
+}
+
+
+class AdjectiveView extends WordView {
+	
+	public Adjective	adjective;
+	
+	
+	public AdjectiveView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	public AdjectiveView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public AdjectiveView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+		initWord();
+	}
+	
+	
+	@Override
+	void initWord() {
+	
+		subTextBGPaint.setColor(Color.MAGENTA);
+	}
+	
+	
+	@Override
+	public void setWord(Word word) {
+	
+		adjective = (Adjective) word;
+		text = adjective.baseForm;
+		subText = "Adjective";
+		requestLayout();
+	}
+	
+}
+
+
+class ArticleView extends WordView {
+	
+	public Article	article;
+	
+	
+	public ArticleView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	public ArticleView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public ArticleView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+		initPaints();
+		initWord();
+	}
+	
+	
+	@Override
+	void initWord() {
+	
+		subTextBGPaint.setColor(Color.TRANSPARENT);
+	}
+	
+	
+	@Override
+	public void setWord(Word word) {
+	
+		text = ((Article) word).baseForm;
+		subText = "";
+		requestLayout();
+	}
+}
+
+abstract class WordView extends View {
+	
+	String			text		= "Pepe";
+	TextPaint		textPaint;
+	DynamicLayout	textLayout;
+	
+	String			subText		= "Test";
+	TextPaint		subTextPaint;
+	/* Use Static Layout for text that won't change. Use dynamic for changing text. */
+	StaticLayout	subTextLayout;
+	Paint			subTextBGPaint;
+	
+	RectF			rectSubText	= new RectF();
+	
+	
+	public int		textHeight;
+	public int		textWidth;
+	
+	
+	protected float	density;
+	protected int	textPadding;
+	protected int	textWidthPadding;
+	protected int	centered;
+	
+	
+	public WordView(Context context) {
+	
+		this(context, null);
+		
+	}
+	
+	
+	public WordView(Context context, AttributeSet attrs) {
+	
+		this(context, attrs, 0);
+	}
+	
+	
+	public WordView(Context context, AttributeSet attrs, int defStyleAttr) {
+	
+		super(context, attrs, defStyleAttr);
+		
+//		initPaints();
+	}
+	
+	
+	protected void initPaints() {
+	
+		textPaint = new TextPaint();
+		textPaint.setAntiAlias(true);
+//		textPaint.setUnderlineText(true);
+		textPaint.setTextSize(20 * getResources().getDisplayMetrics().density);
+		textPaint.setColor(0xFF000000);
+		
+		textWidth = (int) textPaint.measureText(text);
+		textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+		
+		subTextBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		subTextBGPaint.setStyle(Paint.Style.FILL);
+		subTextBGPaint.setColor(Color.YELLOW);
+		
+		subTextPaint = new TextPaint();
+		subTextPaint.setAntiAlias(true);
+		subTextPaint.setTextSize(16 * getResources().getDisplayMetrics().density);
+		subTextPaint.setColor(0xFF000000);
+		
+		int subTextwidth = (int) subTextPaint.measureText(subText);
+		subTextLayout = new StaticLayout(subText, subTextPaint, subTextwidth, Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+		
+		
+		density = getResources().getDisplayMetrics().density;
+		textPadding = (int) (2 / density);
+		textWidthPadding = (int) (12 / density);
+		
+		setWillNotDraw(false);
+	}
+	
+	
+	abstract void initWord();
+	
+	
+	abstract public void setWord(Word word);
+	
+	
+//	public void setText(Word word) {
+//	
+//		subText = word.wordType();
+//		switch (subText) {
+//			case "Verb":
+//				text = ((Verb) word).baseForm;
+//				subTextBGPaint.setColor(Color.GREEN);
+//				break;
+//			case "Noun":
+//				text = ((Noun) word).single;
+//				subTextBGPaint.setColor(Color.BLUE);
+//				break;
+//			case "Conjunction":
+//				text = ((Conjunction) word).baseForm;
+//				subTextBGPaint.setColor(Color.YELLOW);
+//				break;
+//			case "Adjective":
+//				text = ((Adjective) word).baseForm;
+//				subTextBGPaint.setColor(Color.MAGENTA);
+//				break;
+//			default:
+//				text = ((Article) word).baseForm;
+//				subTextBGPaint.setColor(Color.TRANSPARENT);
+//				subText = "";
+//				break;
+//		}
+//		textWidth = (int) textPaint.measureText(text);
+//		textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+//		subTextLayout = new StaticLayout(subText, subTextPaint, (int) subTextPaint.measureText(subText), Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+//		
+////		invalidate();
+////		postInvalidate();
+//		requestLayout();
+////		forceLayout();
+//	}
+	
+	
+	public void capitalize() {
+	
+		text.substring(0, 1).toUpperCase();
+		requestLayout();
+	}
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	
+		
+		textWidth = (int) textPaint.measureText(text);
+		textHeight = textLayout.getHeight();
+		int subTextHeight = subTextLayout.getHeight();
+		int subTextWidth = (int) subTextPaint.measureText(subText);
+		int width;
+		if (subTextWidth > textWidth)
+			width = subTextWidth;
+		else
+			width = textWidth;
+		
+		
+		centered = (int) ((textWidth - subTextWidth) / 2);
+		
+		rectSubText.top = textHeight;
+		rectSubText.bottom = textHeight + subTextHeight + textPadding * 2;
+		rectSubText.left = centered - (textWidthPadding);
+		rectSubText.right = centered + subTextPaint.measureText(subText) + textWidthPadding;
+		
+		int height = (int) (textHeight + rectSubText.height() + textPadding * 2);
+		
+		setMeasuredDimension(width, height);
+	}
+	
+	
+	@Override
+	public void onDraw(Canvas canvas) {
+	
+		super.onDraw(canvas);
+		
+		
+		textLayout.draw(canvas);
+		
+		canvas.drawRoundRect(rectSubText, 20, 20, subTextBGPaint);
+		canvas.translate(centered, textHeight + textPadding);
+		subTextLayout.draw(canvas);
+		canvas.restore();
+	}
+}
