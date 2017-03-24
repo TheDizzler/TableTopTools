@@ -59,7 +59,7 @@
 
         <ToggleButton
             android:id="@+id/toggleBtn_resultProperNoun"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
@@ -68,7 +68,7 @@
 
         <ToggleButton
             android:id="@+id/toggleBtn_resultNounPlural"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"

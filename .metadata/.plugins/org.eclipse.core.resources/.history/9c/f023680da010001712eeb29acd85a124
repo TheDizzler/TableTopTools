@@ -1,0 +1,19 @@
+package fabulousoft.rpgtools.objects;
+
+
+public class ModalVerb implements Word {
+	
+	
+	public ModalVerb(String wordString) {
+	
+		baseFomr = wordString;
+	}
+	
+	
+	@Override
+	public String wordType() {
+	
+		return null;
+	}
+	
+}

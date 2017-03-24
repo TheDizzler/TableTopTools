@@ -8,13 +8,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:weightSum="8"
     tools:context="fabulousoft.rpgtools.ProphecyActivity" >
 
-    <TextView
-        android:id="@+id/textview_prophetic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="[Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb]." />
 
     <fabulousoft.rpgtools.fragments.ProphecyView
         android:id="@+id/prophecyView"
@@ -23,7 +19,7 @@
 
     <Button
         android:id="@+id/btn_Generate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
         android:onClick="generateProphecy"
@@ -43,8 +39,7 @@
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#C00000"
-                 >
+                android:background="#C00000" >
             </TabWidget>
 
             <FrameLayout
@@ -80,6 +75,5 @@
             </FrameLayout>
         </LinearLayout>
     </TabHost>
-
 
 </LinearLayout>

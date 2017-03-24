@@ -1,5 +1,7 @@
 package fabulousoft.rpgtools.objects;
 
+import android.util.Log;
+
 
 public class Article implements Word {
 
@@ -8,6 +10,7 @@ public class Article implements Word {
 	public Article(String word) {
 		
 		baseForm = word;
+//		Log.w("Article", "|" + baseForm + "|" );
 	}
 	
 	

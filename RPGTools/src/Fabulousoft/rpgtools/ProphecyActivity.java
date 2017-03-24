@@ -23,6 +23,7 @@ import fabulousoft.rpgtools.objects.Verb;
 import fabulousoft.rpgtools.objects.Word;
 
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -713,8 +714,7 @@ public class ProphecyActivity extends Activity {
 //		prophecyText = new Prophecy(this);
 		
 		prophecyView = (ProphecyView) findViewById(R.id.prophecyView);
-		prophecyView.initialize(this);
-		
+		prophecyView.intializeControls(this);
 		
 		tabHost = (TabHost) findViewById(R.id.tabhost);
 		tabHost.setup();
@@ -761,6 +761,7 @@ public class ProphecyActivity extends Activity {
 		
 	}
 	
+
 	
 	@Override
 	public void onResume() {
@@ -831,12 +832,6 @@ public class ProphecyActivity extends Activity {
 		return slideFromRight;
 	}
 	
-	
-//	private void generateRandomProphecy() {
-//	
-//		
-//	}
-//	
 	
 	public void generateProphecy(View v) {
 	
