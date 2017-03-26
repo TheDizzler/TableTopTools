@@ -1,0 +1,9 @@
+package fabulousoft.rpgtools.objects;
+
+
+
+public interface Word extends Serializable {
+	
+	String wordType();
+	
+}

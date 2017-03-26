@@ -15,8 +15,9 @@ import android.view.View;
 public class MainActivity extends Activity {
 	
 	/** Remebember to add "/" before any filename. */
-	public static File				internalStorageDir;
+	public static File		internalStorageDir;
 	
+	public static Prophecy	prophecy;
 	
 	
 	@Override
@@ -26,6 +27,8 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		internalStorageDir = getFilesDir();
+		
+		prophecy = new Prophecy();
 	}
 	
 	
@@ -54,6 +57,7 @@ public class MainActivity extends Activity {
 	
 	public void randomProphecy(View v) {
 	
-		startActivity(new Intent(this, ProphecyActivity.class));
+		Intent intent = new Intent(this, ProphecyActivity.class);
+		startActivity(intent);
 	}
 }

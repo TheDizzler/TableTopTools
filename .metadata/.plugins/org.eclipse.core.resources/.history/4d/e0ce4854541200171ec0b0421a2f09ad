@@ -1,0 +1,916 @@
+package fabulousoft.rpgtools;
+
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
+import fabulousoft.rpgtools.fragments.ProphecyView;
+import fabulousoft.rpgtools.objects.Adjective;
+import fabulousoft.rpgtools.objects.Article;
+import fabulousoft.rpgtools.objects.Conjunction;
+import fabulousoft.rpgtools.objects.ModalVerb;
+import fabulousoft.rpgtools.objects.Noun;
+import fabulousoft.rpgtools.objects.Verb;
+import fabulousoft.rpgtools.objects.Word;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+
+
+class Prophecy {
+	
+	/** Full example:
+	 * 		(CAUSE)		[When] the [gray] [wizard] of [merry] [sadness] [comes],
+	 * 					 conj		adj		noun	  2nd adj  2nd noun	 verb
+	 * 		(RESULT)	the [gelatinous] [princess] shall [mistakenly] [venture].
+	 * 						  3rd adj	  3rd noun			adverb		 2nd verb
+	 * */
+	private String					fullProphecy;
+	
+	
+	/* Example sentence:
+	 * [Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb].
+	 */
+	private Conjunction				conjunction				= new Conjunction("[Conjunction]");
+	private Adjective				causePrimaryAdjective	= new Adjective("[adjective]");
+	private Noun					causePrimaryNoun		= new Noun("[noun]");
+	private Adjective				causeSecondaryAdjective	= new Adjective("[adjective]");
+	private Noun					causeSecondaryNoun		= new Noun("[noun]");
+	private Verb					causeVerb				= new Verb("[verb]");
+	
+	private Adjective				resultAdjective			= new Adjective("[adjective]");
+	private Noun					resultNoun				= new Noun("[noun]");
+	private String					adverb					= "[adverb]ally";
+	private Verb					resultVerb				= new Verb("[verb]");
+	
+	private Article					space					= new Article(" ");
+	private Article					the						= new Article("the ");
+	private Article					of						= new Article("of ");
+	private Article					comma					= new Article(", ");
+	private Article					period					= new Article(".");
+	
+	
+	Random							rand					= new Random();
+	
+	private ArrayList<Conjunction>	conjunctionList			= new ArrayList<Conjunction>();
+	private ArrayList<Conjunction>	conjunctionSpecialList	= new ArrayList<Conjunction>();
+	private ArrayList<Noun>			nounCommonList			= new ArrayList<Noun>();
+	private ArrayList<Noun>			nounProperList			= new ArrayList<Noun>();
+	private ArrayList<Verb>			verbList				= new ArrayList<Verb>();
+	private ArrayList<Adjective>	adjectiveList			= new ArrayList<Adjective>();
+	
+	
+	/* Cause Controls */
+	ImageView						lockBtnConjunction;
+	Spinner							spinnerConj;
+	Switch							switchPrimaryAdjective;
+	ImageView						lockBtnPrimaryAdj;
+	ToggleButton					toggleBtnPrimaryNounPlural;
+	ToggleButton					toggleBtnPrimaryNounProper;
+	ImageView						lockBtnPrimaryNoun;
+	Switch							switchSecondaryNoun;
+	ToggleButton					toggleBtnSecondaryNounProper;
+	ToggleButton					toggleBtnSecondaryNounPlural;
+	ImageView						lockBtnSecondaryNoun;
+	Switch							switchSecondaryAdjective;
+	ImageView						lockBtnSecondaryAdjective;
+	ImageView						lockBtnCauseVerb;
+	
+	/* Result Controls */
+	Switch							switchResultAdjective;
+	ImageView						lockBtnResultAdjective;
+	ToggleButton					toggleBtnResultNounProper;
+	ToggleButton					toggleBtnResultNounPlural;
+	ImageView						lockBtnResultNoun;
+	ImageView						lockBtnResultVerb;
+	
+	
+	boolean							conjunctionLocked		= false;
+	boolean							primaryNounLocked		= false;
+	boolean							primaryAdjLocked		= false;
+	boolean							secondaryNounLocked		= false;
+	boolean							secondaryAdjLocked		= false;
+	boolean							causeVerbLocked			= false;
+	
+	boolean							resultAdjLocked			= false;
+	boolean							resultNounLocked		= false;
+	boolean							resultVerbLocked		= false;
+	
+	ProphecyView					prophecyView;
+	
+	
+	
+	public boolean					initialized;
+	
+	
+	public Prophecy() {
+	
+	}
+	
+	
+	public void initialize(Activity activity) {
+	
+		if (initialized) {
+		
+			return;
+		}
+		
+		try {
+			
+			InputStream is = activity.getAssets().open("WordList.xml");
+			Document xmlDoc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(is);
+			
+			is.close();
+			
+			Element rootNode = xmlDoc.getDocumentElement();
+			rootNode.normalize();
+			
+			Element conjunctionsNode = (Element) rootNode.getElementsByTagName("conjunctions").item(0);
+			
+			Element normalNode = (Element) conjunctionsNode.getElementsByTagName("normal").item(0);
+			String newWords = normalNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				conjunctionList.add(new Conjunction(word));
+			}
+			
+			Element specialConjNode = (Element) conjunctionsNode
+				.getElementsByTagName("special").item(0);
+			newWords = specialConjNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				conjunctionSpecialList.add(new Conjunction(word));
+			}
+			
+			Element nounsNode = (Element) rootNode.getElementsByTagName("nouns").item(0);
+			Element commonNounNode = (Element) nounsNode.getElementsByTagName("common").item(0);
+			newWords = commonNounNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				nounCommonList.add(new Noun(word));
+			}
+			
+			Element properNounNode = (Element) nounsNode.getElementsByTagName("proper").item(0);
+			newWords = properNounNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				nounProperList.add(new Noun(word));
+//				Log.e("Check", word + " WOW");
+			}
+			
+			Element verbsNode = (Element) rootNode.getElementsByTagName("verbs").item(0);
+			newWords = verbsNode.getTextContent().trim();
+			for (String word : newWords.split("\\s{2,}")) {
+				verbList.add(new Verb(word));
+			}
+			
+			
+			Element adjNode = (Element) rootNode.getElementsByTagName("adjectives").item(0);
+			newWords = adjNode.getTextContent().trim();
+			for (String word : newWords.split("\\s+")) {
+				adjectiveList.add(new Adjective(word));
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (SAXException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		
+		initComponents(activity);
+		initialized = true;
+	}
+	
+	
+	private void initComponents(final Activity activity) {
+	
+		prophecyView = (ProphecyView) activity.findViewById(R.id.prophecyView);
+		
+//		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
+		
+		/* Cause Controls */
+		lockBtnConjunction = (ImageView) activity.findViewById(R.id.lockBtn_conj);
+		spinnerConj = (Spinner) activity.findViewById(R.id.spinner_Conjunctions);
+		switchPrimaryAdjective = (Switch) activity.findViewById(R.id.switch_primaryAdjective);
+		lockBtnPrimaryAdj = (ImageView) activity.findViewById(R.id.lockBtn_primaryAdj);
+		toggleBtnPrimaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounPlural);
+		toggleBtnPrimaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_primaryNounProper);
+		lockBtnPrimaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_primaryNoun);
+		
+		switchSecondaryNoun = (Switch) activity.findViewById(R.id.switch_secondaryNoun);
+		toggleBtnSecondaryNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounProper);
+		toggleBtnSecondaryNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_secondaryNounPlural);
+		lockBtnSecondaryNoun = (ImageView) activity.findViewById(R.id.lockBtn_secondaryNoun);
+		switchSecondaryAdjective = (Switch) activity.findViewById(R.id.switch_secondaryAdjective);
+		lockBtnSecondaryAdjective = (ImageView) activity.findViewById(R.id.lockBtn_secondaryAdjective);
+		lockBtnCauseVerb = (ImageView) activity.findViewById(R.id.lockBtn_causeVerb);
+		
+		
+		lockBtnConjunction.setOnClickListener(new OnClickListener() {
+			
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				conjunctionLocked = !conjunctionLocked;
+				if (conjunctionLocked) {
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
+					lockBtnConjunction.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+				spinnerConj.setEnabled(conjunctionLocked);
+			}
+		});
+		
+		
+		ArrayAdapter<Conjunction> conjAdap = new ArrayAdapter<Conjunction>(activity,
+			android.R.layout.simple_spinner_dropdown_item, conjunctionList);
+		spinnerConj.setAdapter(conjAdap);
+		spinnerConj.setEnabled(false);
+		spinnerConj.setOnItemSelectedListener(new OnItemSelectedListener() {
+			
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			
+				conjunction = (Conjunction) spinnerConj.getSelectedItem();
+				reconstructProphecy();
+			}
+			
+			
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			
+			}
+		});
+		
+		lockBtnConjunction.callOnClick();
+		
+		switchPrimaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!primaryAdjLocked)
+					causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnPrimaryAdj.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryAdjLocked = !primaryAdjLocked;
+				if (primaryAdjLocked)
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnPrimaryAdj.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		toggleBtnPrimaryNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		toggleBtnPrimaryNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!primaryNounLocked) {
+					if (toggleBtnPrimaryNounProper.isChecked())
+						causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnPrimaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				primaryNounLocked = !primaryNounLocked;
+				if (primaryNounLocked) {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				} else {
+					lockBtnPrimaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				}
+			}
+		});
+		
+		
+		switchSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryAdjective.isChecked() && !secondaryAdjLocked) {
+					causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryAdjLocked = !secondaryAdjLocked;
+				if (secondaryAdjLocked)
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnSecondaryAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+			}
+		});
+		
+		
+		switchSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (switchSecondaryNoun.isChecked() && !secondaryNounLocked)
+					causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				switchSecondaryAdjective.setEnabled(switchSecondaryNoun.isChecked());
+				
+				reconstructProphecy();
+			}
+			
+			
+		});
+		
+		toggleBtnSecondaryNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (!secondaryNounLocked) {
+					if (toggleBtnSecondaryNounProper.isChecked())
+						causeSecondaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+			
+			
+		});
+		
+		toggleBtnSecondaryNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnSecondaryNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				secondaryNounLocked = !secondaryNounLocked;
+				if (secondaryNounLocked)
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnSecondaryNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		lockBtnCauseVerb.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				causeVerbLocked = !causeVerbLocked;
+				if (causeVerbLocked)
+					lockBtnCauseVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnCauseVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		/* Result controls */
+		switchResultAdjective = (Switch) activity.findViewById(R.id.switch_resultAdjective);
+		lockBtnResultAdjective = (ImageView) activity.findViewById(R.id.lockBtn_resultAdjective);
+		toggleBtnResultNounProper = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultProperNoun);
+		toggleBtnResultNounPlural = (ToggleButton) activity.findViewById(R.id.toggleBtn_resultNounPlural);
+		lockBtnResultNoun = (ImageView) activity.findViewById(R.id.lockBtn_resultNoun);
+		lockBtnResultVerb = (ImageView) activity.findViewById(R.id.lockBtn_resultVerb);
+		
+		switchResultAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			
+				if (switchResultAdjective.isChecked() && !resultAdjLocked)
+					resultAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+				
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnResultAdjective.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultAdjLocked = !resultAdjLocked;
+				if (resultAdjLocked)
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultAdjective.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		
+		
+		toggleBtnResultNounProper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				if (!resultNounLocked) {
+					if (toggleBtnResultNounProper.isChecked())
+						resultNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+					else
+						resultNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+				}
+				reconstructProphecy();
+			}
+		});
+		
+		toggleBtnResultNounPlural.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				reconstructProphecy();
+			}
+		});
+		
+		lockBtnResultNoun.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultNounLocked = !resultNounLocked;
+				if (resultNounLocked)
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultNoun.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+		
+		lockBtnResultVerb.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			
+				resultVerbLocked = !resultVerbLocked;
+				if (resultVerbLocked)
+					lockBtnResultVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.locked));
+				else
+					lockBtnResultVerb.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlocked));
+				
+			}
+		});
+	}
+	
+	
+	public void generateFullProphecy() {
+	
+		
+		if (conjunctionLocked)
+			conjunction = (Conjunction) spinnerConj.getSelectedItem();
+		else
+			conjunction = conjunctionList.get(rand.nextInt(conjunctionList.size()));
+		
+		if (!primaryAdjLocked)
+			causePrimaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		
+		if (!primaryNounLocked) {
+			if (toggleBtnPrimaryNounProper.isChecked())
+				causePrimaryNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+			else
+				causePrimaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		}
+		
+		if (!secondaryAdjLocked)
+			causeSecondaryAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		if (!secondaryNounLocked)
+			causeSecondaryNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		
+		if (!causeVerbLocked)
+			causeVerb = verbList.get(rand.nextInt(verbList.size()));
+		
+		if (!resultAdjLocked)
+			resultAdjective = adjectiveList.get(rand.nextInt(adjectiveList.size()));
+		
+		if (!resultNounLocked) {
+			if (toggleBtnResultNounProper.isChecked())
+				resultNoun = nounProperList.get(rand.nextInt(nounProperList.size()));
+			else
+				resultNoun = nounCommonList.get(rand.nextInt(nounCommonList.size()));
+		}
+		if (!resultVerbLocked)
+			resultVerb = verbList.get(rand.nextInt(verbList.size()));
+		
+		reconstructProphecy();
+	}
+	
+	
+	
+	public void reconstructProphecy() {
+	
+		prophecyView.reset();
+		
+		reconstructCause();
+		fullProphecy += ", ";
+		prophecyView.addWord(comma);
+		reconstrucResult();
+		// close prophecy
+		fullProphecy += ".";
+		prophecyView.addWord(period);
+		
+//		propheticText.setText(fullProphecy);
+	};
+	
+	
+	private void reconstructCause() {
+	
+		prophecyView.addWord(conjunction, true);
+		fullProphecy = firstCharToUpper(conjunction.toString());
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		prophecyView.addWord(the, toggleBtnPrimaryNounProper.isChecked());
+		if (toggleBtnPrimaryNounProper.isChecked()) {
+			fullProphecy += "The ";
+		} else {
+			fullProphecy += "the ";
+		}
+		
+		prophecyView.addWord(space);
+		
+		if (switchPrimaryAdjective.isChecked()) {
+			
+			prophecyView.addWord(causePrimaryAdjective, toggleBtnPrimaryNounProper.isChecked());
+			
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString());
+//				prophecyView.addWord(causePrimaryAdjective, true);
+			} else {
+				fullProphecy += causePrimaryAdjective;
+//				prophecyView.addWord(causePrimaryAdjective, false);
+			}
+			
+			fullProphecy += " ";
+			prophecyView.addWord(space);
+		}
+		
+		prophecyView.addWord(causePrimaryNoun,
+				toggleBtnPrimaryNounProper.isChecked(),
+				toggleBtnPrimaryNounPlural.isChecked());
+		
+		if (toggleBtnPrimaryNounPlural.isChecked()) {
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
+//				prophecyView.addWord(causePrimaryNoun, true, true);
+			} else {
+				fullProphecy += causePrimaryNoun.plural;
+//				prophecyView.addWord(causePrimaryNoun, false, true);
+			}
+		} else {
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
+//				prophecyView.addWord(causePrimaryNoun, true, false);
+			} else {
+				fullProphecy += causePrimaryNoun.single;
+//				prophecyView.addWord(causePrimaryNoun, true, false);
+			}
+		}
+		
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		
+		if (switchSecondaryNoun.isChecked()) {
+			fullProphecy += "of ";
+			prophecyView.addWord(of);
+			
+			if (switchSecondaryAdjective.isChecked()) {
+				
+				prophecyView.addWord(causeSecondaryAdjective, toggleBtnSecondaryNounProper.isChecked());
+				
+				if (toggleBtnSecondaryNounProper.isChecked()) {
+					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
+					
+				} else {
+					fullProphecy += causeSecondaryAdjective;
+				}
+			}
+			
+			fullProphecy += " ";
+			prophecyView.addWord(space);
+			
+			prophecyView.addWord(causeSecondaryNoun,
+					toggleBtnSecondaryNounProper.isChecked(),
+					toggleBtnSecondaryNounPlural.isChecked());
+			
+			if (toggleBtnSecondaryNounPlural.isChecked()) {
+				
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.plural);
+				else
+					fullProphecy += causeSecondaryNoun.plural;
+				
+			} else {
+				if (toggleBtnSecondaryNounProper.isChecked())
+					fullProphecy += firstCharToUpper(causeSecondaryNoun.single);
+				else
+					fullProphecy += causeSecondaryNoun.single;
+			}
+		}
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		
+		prophecyView.addWord(causeVerb, false, toggleBtnPrimaryNounPlural.isChecked());
+		
+		if (toggleBtnPrimaryNounPlural.isChecked())
+			fullProphecy += causeVerb.baseForm;
+		else
+			fullProphecy += causeVerb.sForm;
+		
+	}
+	
+	
+	private void reconstrucResult() {
+	
+		prophecyView.addWord(the, toggleBtnResultNounProper.isChecked());
+		if (toggleBtnResultNounProper.isChecked())
+			fullProphecy += "The";
+		else
+			fullProphecy += "the";
+		
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		
+		if (switchResultAdjective.isChecked()) {
+			prophecyView.addWord(resultAdjective, toggleBtnResultNounProper.isChecked());
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultAdjective.toString());
+			else
+				fullProphecy += resultAdjective;
+			
+			fullProphecy += " ";
+			prophecyView.addWord(space);
+		}
+		
+		prophecyView.addWord(resultNoun,
+				toggleBtnResultNounProper.isChecked(),
+				toggleBtnResultNounPlural.isChecked());
+		
+		if (toggleBtnResultNounPlural.isChecked()) {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.plural);
+			else
+				fullProphecy += resultNoun.plural;
+		} else {
+			if (toggleBtnResultNounProper.isChecked())
+				fullProphecy += firstCharToUpper(resultNoun.single);
+			else
+				fullProphecy += resultNoun.single;
+		}
+		
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		fullProphecy += "shall ";
+		prophecyView.addWord(new ModalVerb("shall"));
+		prophecyView.addWord(space);
+		fullProphecy += resultVerb.baseForm + " ";
+		prophecyView.addWord(resultVerb, false, true);
+//		fullProphecy += adverb;
+		
+	}
+	
+	
+	public String firstCharToUpper(String change) {
+	
+		return change.substring(0, 1).toUpperCase() + change.substring(1);
+	}
+
+}
+
+
+
+public class ProphecyActivity extends Activity {
+	
+	/** Temporary prophecy holder. */
+	Prophecy	prophecy;
+	TabHost		tabHost;
+	
+	
+//	ProphecyView	prophecyView;
+	
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+	
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_prophecy);
+		
+		prophecy = MainActivity.prophecy;
+			prophecy.initialize(this);
+		
+		tabHost = (TabHost) findViewById(R.id.tabhost);
+		tabHost.setup();
+		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+			
+			View	currentView;
+			View	previousView;
+			int		previousTab;
+			
+			
+			@Override
+			public void onTabChanged(String arg0) {
+			
+				if (previousView == null)
+					previousView = tabHost.getCurrentView();
+				
+				currentView = tabHost.getCurrentView();
+				
+				if (tabHost.getCurrentTab() > previousTab) {
+					previousView.startAnimation(slideToLeftAnimation());
+					currentView.startAnimation(slideFromRightAnimation());
+				} else {
+					previousView.startAnimation(slideToRightAnimation());
+					currentView.startAnimation(slideFromLeftAnimation());
+				}
+				previousView = currentView;
+				previousTab = tabHost.getCurrentTab();
+				
+			}
+			
+			
+		});
+		
+		TabHost.TabSpec tabSpec = tabHost.newTabSpec("Tab One");
+		tabSpec.setContent(R.id.tab1);
+		tabSpec.setIndicator("Cause");
+		
+		tabHost.addTab(tabSpec);
+		
+		tabSpec = tabHost.newTabSpec("Result");
+		tabSpec.setContent(R.id.tab2);
+		tabSpec.setIndicator("Result");
+		tabHost.addTab(tabSpec);
+		
+		TextView tv = (TextView) tabHost.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
+		tv.setTextColor(Color.WHITE);
+		tv = (TextView) tabHost.getTabWidget().getChildAt(1).findViewById(android.R.id.title);
+		tv.setTextColor(Color.WHITE);
+		
+	}
+	
+	
+	
+	public void generateProphecy(View v) {
+	
+		prophecy.generateFullProphecy();
+	}
+	
+	
+	
+	private Animation slideToLeftAnimation() {
+	
+		Animation slideOutRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, -1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideOutRight.setDuration(250);
+		slideOutRight.setInterpolator(new AccelerateInterpolator());
+		
+		return slideOutRight;
+	}
+	
+	
+	private Animation slideFromLeftAnimation() {
+	
+		Animation slideFromRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, -1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideFromRight.setDuration(250);
+		slideFromRight.setInterpolator(new AccelerateInterpolator());
+		
+		
+		return slideFromRight;
+	}
+	
+	
+	private Animation slideToRightAnimation() {
+	
+		Animation slideOutRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideOutRight.setDuration(250);
+		slideOutRight.setInterpolator(new AccelerateInterpolator());
+		
+		return slideOutRight;
+	}
+	
+	
+	private Animation slideFromRightAnimation() {
+	
+		Animation slideFromRight = new TranslateAnimation(
+			Animation.RELATIVE_TO_PARENT, 1,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0,
+			Animation.RELATIVE_TO_PARENT, 0);
+		slideFromRight.setDuration(250);
+		slideFromRight.setInterpolator(new AccelerateInterpolator());
+		
+		
+		return slideFromRight;
+	}
+	
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.prophecy, menu);
+		return true;
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}

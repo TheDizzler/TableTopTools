@@ -3,6 +3,8 @@ package fabulousoft.rpgtools.objects;
 
 public class Verb implements Word {
 	
+
+	private static final long	serialVersionUID	= -2831236665089268347L;
 	public String	baseForm;
 	public String	sForm;
 	public String	ingForm;

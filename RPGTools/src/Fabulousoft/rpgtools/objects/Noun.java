@@ -3,6 +3,7 @@ package fabulousoft.rpgtools.objects;
 
 public class Noun implements Word {
 	
+	private static final long	serialVersionUID	= 8356817319034746799L;
 	public String	single;
 	public String	plural;
 	

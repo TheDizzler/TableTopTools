@@ -26,6 +26,8 @@ import fabulousoft.rpgtools.objects.Word;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +76,13 @@ class Prophecy {
 	private String					adverb					= "[adverb]ally";
 	private Verb					resultVerb				= new Verb("[verb]");
 	
+	private Article					space					= new Article(" ");
+	private Article					the						= new Article("the ");
+	private Article					of						= new Article("of ");
+	private Article					comma					= new Article(", ");
+	private Article					period					= new Article(".");
+	
+	
 	Random							rand					= new Random();
 	
 	private ArrayList<Conjunction>	conjunctionList			= new ArrayList<Conjunction>();
@@ -83,9 +92,6 @@ class Prophecy {
 	private ArrayList<Verb>			verbList				= new ArrayList<Verb>();
 	private ArrayList<Adjective>	adjectiveList			= new ArrayList<Adjective>();
 	
-	
-	
-//	TextView						propheticText;
 	
 	/* Cause Controls */
 	ImageView						lockBtnConjunction;
@@ -126,8 +132,22 @@ class Prophecy {
 	ProphecyView					prophecyView;
 	
 	
-	public Prophecy(Activity activity) {
 	
+	public boolean					initialized;
+	
+	
+	public Prophecy() {
+	
+	}
+	
+	
+	public void initialize(Activity activity) {
+	
+		if (initialized) {
+			initComponents(activity);
+			return;
+		}
+		
 		try {
 			
 			InputStream is = activity.getAssets().open("WordList.xml");
@@ -193,7 +213,7 @@ class Prophecy {
 		}
 		
 		initComponents(activity);
-		
+		initialized = true;
 	}
 	
 	
@@ -201,7 +221,6 @@ class Prophecy {
 	
 		prophecyView = (ProphecyView) activity.findViewById(R.id.prophecyView);
 		
-//		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
 		
 		/* Cause Controls */
 		lockBtnConjunction = (ImageView) activity.findViewById(R.id.lockBtn_conj);
@@ -553,57 +572,32 @@ class Prophecy {
 	}
 	
 	
-	Article	space	= new Article(" ");
-	Article	the		= new Article("the ");
-	Article	of		= new Article("of ");
-	Article	comma	= new Article(", ");
-	Article	period	= new Article(".");
-	
 	
 	public void reconstructProphecy() {
 	
 		prophecyView.reset();
 		
 		reconstructCause();
-		fullProphecy += ", ";
 		prophecyView.addWord(comma);
 		reconstrucResult();
 		// close prophecy
-		fullProphecy += ".";
 		prophecyView.addWord(period);
 		
-//		propheticText.setText(fullProphecy);
 	};
 	
 	
 	private void reconstructCause() {
 	
 		prophecyView.addWord(conjunction, true);
-		fullProphecy = firstCharToUpper(conjunction.toString());
-		fullProphecy += " ";
+		
 		prophecyView.addWord(space);
 		prophecyView.addWord(the, toggleBtnPrimaryNounProper.isChecked());
-		if (toggleBtnPrimaryNounProper.isChecked()) {
-			fullProphecy += "The ";
-		} else {
-			fullProphecy += "the ";
-		}
 		
 		prophecyView.addWord(space);
 		
 		if (switchPrimaryAdjective.isChecked()) {
 			
 			prophecyView.addWord(causePrimaryAdjective, toggleBtnPrimaryNounProper.isChecked());
-			
-			if (toggleBtnPrimaryNounProper.isChecked()) {
-				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString());
-//				prophecyView.addWord(causePrimaryAdjective, true);
-			} else {
-				fullProphecy += causePrimaryAdjective;
-//				prophecyView.addWord(causePrimaryAdjective, false);
-			}
-			
-			fullProphecy += " ";
 			prophecyView.addWord(space);
 		}
 		
@@ -611,96 +605,35 @@ class Prophecy {
 				toggleBtnPrimaryNounProper.isChecked(),
 				toggleBtnPrimaryNounPlural.isChecked());
 		
-		if (toggleBtnPrimaryNounPlural.isChecked()) {
-			if (toggleBtnPrimaryNounProper.isChecked()) {
-				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
-//				prophecyView.addWord(causePrimaryNoun, true, true);
-			} else {
-				fullProphecy += causePrimaryNoun.plural;
-//				prophecyView.addWord(causePrimaryNoun, false, true);
-			}
-		} else {
-			if (toggleBtnPrimaryNounProper.isChecked()) {
-				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
-//				prophecyView.addWord(causePrimaryNoun, true, false);
-			} else {
-				fullProphecy += causePrimaryNoun.single;
-//				prophecyView.addWord(causePrimaryNoun, true, false);
-			}
-		}
 		
-		fullProphecy += " ";
 		prophecyView.addWord(space);
 		
 		if (switchSecondaryNoun.isChecked()) {
-			fullProphecy += "of ";
+			
 			prophecyView.addWord(of);
 			
-			if (switchSecondaryAdjective.isChecked()) {
-				
+			if (switchSecondaryAdjective.isChecked())
 				prophecyView.addWord(causeSecondaryAdjective, toggleBtnSecondaryNounProper.isChecked());
-				
-				if (toggleBtnSecondaryNounProper.isChecked()) {
-					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
-					
-				} else {
-					fullProphecy += causeSecondaryAdjective;
-				}
-			}
-			
-			fullProphecy += " ";
+
 			prophecyView.addWord(space);
 			
 			prophecyView.addWord(causeSecondaryNoun,
 					toggleBtnSecondaryNounProper.isChecked(),
 					toggleBtnSecondaryNounPlural.isChecked());
-			
-			if (toggleBtnSecondaryNounPlural.isChecked()) {
-
-				if (toggleBtnSecondaryNounProper.isChecked())
-					fullProphecy += firstCharToUpper(causeSecondaryNoun.plural);
-				else
-					fullProphecy += causeSecondaryNoun.plural;
-				
-			} else {
-				if (toggleBtnSecondaryNounProper.isChecked())
-					fullProphecy += firstCharToUpper(causeSecondaryNoun.single);
-				else
-					fullProphecy += causeSecondaryNoun.single;
-			}
 		}
-		fullProphecy += " ";
+		
 		prophecyView.addWord(space);
-		
 		prophecyView.addWord(causeVerb, false, toggleBtnPrimaryNounPlural.isChecked());
-		
-		if (toggleBtnPrimaryNounPlural.isChecked())
-			fullProphecy += causeVerb.baseForm;
-		else
-			fullProphecy += causeVerb.sForm;
-		
 	}
 	
 	
 	private void reconstrucResult() {
 	
 		prophecyView.addWord(the, toggleBtnResultNounProper.isChecked());
-		if (toggleBtnResultNounProper.isChecked())
-			fullProphecy += "The";
-		else
-			fullProphecy += "the";
-		
-		fullProphecy += " ";
 		prophecyView.addWord(space);
 		
 		if (switchResultAdjective.isChecked()) {
 			prophecyView.addWord(resultAdjective, toggleBtnResultNounProper.isChecked());
-			if (toggleBtnResultNounProper.isChecked())
-				fullProphecy += firstCharToUpper(resultAdjective.toString());
-			else
-				fullProphecy += resultAdjective;
-			
-			fullProphecy += " ";
 			prophecyView.addWord(space);
 		}
 		
@@ -708,24 +641,9 @@ class Prophecy {
 				toggleBtnResultNounProper.isChecked(),
 				toggleBtnResultNounPlural.isChecked());
 		
-		if (toggleBtnResultNounPlural.isChecked()) {
-			if (toggleBtnResultNounProper.isChecked())
-				fullProphecy += firstCharToUpper(resultNoun.plural);
-			else
-				fullProphecy += resultNoun.plural;
-		} else {
-			if (toggleBtnResultNounProper.isChecked())
-				fullProphecy += firstCharToUpper(resultNoun.single);
-			else
-				fullProphecy += resultNoun.single;
-		}
-		
-		fullProphecy += " ";
 		prophecyView.addWord(space);
-		fullProphecy += "shall ";
 		prophecyView.addWord(new ModalVerb("shall"));
 		prophecyView.addWord(space);
-		fullProphecy += resultVerb.baseForm + " ";
 		prophecyView.addWord(resultVerb, false, true);
 //		fullProphecy += adverb;
 		
@@ -736,8 +654,7 @@ class Prophecy {
 	
 		return change.substring(0, 1).toUpperCase() + change.substring(1);
 	}
-	
-	
+
 }
 
 
@@ -745,7 +662,7 @@ class Prophecy {
 public class ProphecyActivity extends Activity {
 	
 	/** Temporary prophecy holder. */
-	Prophecy	prophecyText;
+	Prophecy	prophecy;
 	TabHost		tabHost;
 	
 	
@@ -758,8 +675,8 @@ public class ProphecyActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_prophecy);
 		
-		prophecyText = new Prophecy(this);
-		
+		prophecy = MainActivity.prophecy;
+			prophecy.initialize(this);
 		
 		tabHost = (TabHost) findViewById(R.id.tabhost);
 		tabHost.setup();
@@ -804,24 +721,18 @@ public class ProphecyActivity extends Activity {
 		tabSpec.setIndicator("Result");
 		tabHost.addTab(tabSpec);
 		
-	}
-	
-	
-	@Override
-	public void onResume() {
-	
-		super.onResume();
-		
 		TextView tv = (TextView) tabHost.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
 		tv.setTextColor(Color.WHITE);
 		tv = (TextView) tabHost.getTabWidget().getChildAt(1).findViewById(android.R.id.title);
 		tv.setTextColor(Color.WHITE);
+		
 	}
+	
 	
 	
 	public void generateProphecy(View v) {
 	
-		prophecyText.generateFullProphecy();
+		prophecy.generateFullProphecy();
 	}
 	
 	

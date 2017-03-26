@@ -3,6 +3,8 @@ package fabulousoft.rpgtools.objects;
 
 public class Adjective implements Word {
 	
+
+	private static final long	serialVersionUID	= -5491296066292046960L;
 	public String	baseForm;
 	
 	

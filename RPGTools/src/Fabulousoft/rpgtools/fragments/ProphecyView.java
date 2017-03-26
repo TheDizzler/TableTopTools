@@ -31,9 +31,6 @@ import android.widget.LinearLayout;
 public class ProphecyView extends LinearLayout {
 	
 	ArrayList<WordView>	wordList		= new ArrayList<WordView>();
-//	private int			lineHeight;
-//	private int			horizontalSpacing	= 0;
-	private int			verticalSpacing	= 0;
 	
 	
 	public ProphecyView(Context context) {
@@ -110,7 +107,7 @@ public class ProphecyView extends LinearLayout {
 				final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 				child.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), childHeightMeasureSpec);
 				final int childw = child.getMeasuredWidth();
-				line_height = Math.max(line_height, child.getMeasuredHeight() + verticalSpacing);
+				line_height = Math.max(line_height, child.getMeasuredHeight());
 				
 				if (xpos + childw > width) {
 					xpos = getPaddingLeft();
