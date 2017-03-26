@@ -225,7 +225,7 @@ public class ProphecyView extends LinearLayout {
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		conjunction.setWord(new Conjunction("[Conjunction]"));
-//		addView(conjunction);
+		addView(conjunction);
 		
 		causePrimaryAdjective = new AdjectiveView(getContext());
 		causePrimaryAdjective.setLayoutParams(new LinearLayout.LayoutParams(
@@ -821,11 +821,11 @@ public class ProphecyView extends LinearLayout {
 	private void addWord(Article article) {
 	
 		WordView wordView = new ArticleView(getContext());
-//		wordView.setLayoutParams(new LinearLayout.LayoutParams(
-//			LinearLayout.LayoutParams.WRAP_CONTENT,
-//			LinearLayout.LayoutParams.WRAP_CONTENT));
-//		wordView.setWord(article);
-//		addWord(wordView);
+		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		wordView.setWord(new Article("of "));
+		addWord(wordView);
 	}
 	
 	
@@ -844,25 +844,23 @@ public class ProphecyView extends LinearLayout {
 	}
 	
 	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		
-		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-		
-		Log.w("Check", widthMeasureSpec + " x " + heightMeasureSpec);
-		Log.w("Check", widthMode + " x " + heightMode);
-		Log.w("Check", widthSize + " x " + heightSize);
-		super.onMeasure(widthSize, heightSize);
-		
+//	@Override
+//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//	
+//		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+//		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+//		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//		
+//		Log.w("Check", widthMeasureSpec + " x " + heightMeasureSpec);
+//		Log.w("Check", widthMode + " x " + heightMode);
+//		Log.w("Check", widthSize + " x " + heightSize);
+//		
+//		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 //		for (WordView word : wordList)
-//			word.measure(widthSize, heightSize);
-		
-	}
+//			word.measure(widthMeasureSpec, heightMeasureSpec);
+//		
+//	}
 	
 	
 	
@@ -1362,7 +1360,7 @@ abstract class WordView extends LinearLayout {
 //		textView.measure(widthMeasureSpec, heightMeasureSpec);
 		textWidth = textView.getWidth();
 		textHeight = textView.getHeight();
-//		Log.w("Article", textView.getText() + " is " + textWidth + " x " + textHeight);
+		Log.w("Article", textView.getText() + " is " + textWidth + " x " + textHeight);
 //		Rect rect = new Rect();
 //		textPaint.getTextBounds(text, 0, text.length(), rect);
 //		textHeight  = rect.height();

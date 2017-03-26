@@ -225,42 +225,42 @@ public class ProphecyView extends LinearLayout {
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		conjunction.setWord(new Conjunction("[Conjunction]"));
-//		addView(conjunction);
+		addView(conjunction);
 		
 		causePrimaryAdjective = new AdjectiveView(getContext());
 		causePrimaryAdjective.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
-		causePrimaryAdjective.setWord(new Adjective(" [adjective] "));
-//		addView(causePrimaryAdjective);
+		causePrimaryAdjective.setWord(new Adjective("[adjective]"));
+		addView(causePrimaryAdjective);
 		
 		causePrimaryNoun = new NounView(getContext());
 		causePrimaryNoun.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		causePrimaryNoun.setWord(new Noun("[noun]"));
-//		addView(causePrimaryNoun);
+		addView(causePrimaryNoun);
 		
 		causeSecondaryAdjective = new AdjectiveView(getContext());
 		causeSecondaryAdjective.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		causeSecondaryAdjective.setWord(new Adjective("[adjective]"));
-//		addView(causeSecondaryAdjective);
+		addView(causeSecondaryAdjective);
 		
 		causeSecondaryNoun = new NounView(getContext());
 		causeSecondaryNoun.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		causeSecondaryNoun.setWord(new Noun("[noun]"));
-//		addView(causeSecondaryNoun);
+		addView(causeSecondaryNoun);
 		
 		causeVerb = new VerbView(getContext());
 		causeVerb.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		causeVerb.setWord(new Verb("[verb]"));
-//		addView(causeVerb);
+		addView(causeVerb);
 		
 		
 		resultNoun = new NounView(getContext());
@@ -268,28 +268,28 @@ public class ProphecyView extends LinearLayout {
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		resultNoun.setWord(new Noun("[noun]"));
-//		addView(resultNoun);
+		addView(resultNoun);
 		
 		modalVerb = new ModalVerbView(getContext());
 		modalVerb.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		modalVerb.setWord(new ModalVerb("[shall]"));
-//		addView(modalVerb);
+		addView(modalVerb);
 		
 		resultAdjective = new AdjectiveView(getContext());
 		resultAdjective.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		resultAdjective.setWord(new Adjective("[adjective]"));
-//		addView(resultAdjective);
+		addView(resultAdjective);
 		
 		resultVerb = new VerbView(getContext());
 		resultVerb.setLayoutParams(new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT));
 		resultVerb.setWord(new Verb("[verb]"));
-//		addView(resultVerb);
+		addView(resultVerb);
 	}
 	
 	
@@ -664,8 +664,8 @@ public class ProphecyView extends LinearLayout {
 		addWord(period);
 		
 //		propheticText.setText(fullProphecy);
-		invalidate();
-		postInvalidate();
+//		invalidate();
+//		postInvalidate();
 	};
 	
 	Article	space	= new Article(" ");
@@ -821,11 +821,11 @@ public class ProphecyView extends LinearLayout {
 	private void addWord(Article article) {
 	
 		WordView wordView = new ArticleView(getContext());
-//		wordView.setLayoutParams(new LinearLayout.LayoutParams(
-//			LinearLayout.LayoutParams.WRAP_CONTENT,
-//			LinearLayout.LayoutParams.WRAP_CONTENT));
-//		wordView.setWord(article);
-//		addWord(wordView);
+		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		wordView.setWord(article);
+		addWord(wordView);
 	}
 	
 	
@@ -844,25 +844,23 @@ public class ProphecyView extends LinearLayout {
 	}
 	
 	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		
-		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-		
-		Log.w("Check", widthMeasureSpec + " x " + heightMeasureSpec);
-		Log.w("Check", widthMode + " x " + heightMode);
-		Log.w("Check", widthSize + " x " + heightSize);
-		super.onMeasure(widthSize, heightSize);
-		
+//	@Override
+//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//	
+//		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+//		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+//		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//		
+//		Log.w("Check", widthMeasureSpec + " x " + heightMeasureSpec);
+//		Log.w("Check", widthMode + " x " + heightMode);
+//		Log.w("Check", widthSize + " x " + heightSize);
+//		
+//		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 //		for (WordView word : wordList)
-//			word.measure(widthSize, heightSize);
-		
-	}
+//			word.measure(widthMeasureSpec, heightMeasureSpec);
+//		
+//	}
 	
 	
 	
@@ -925,9 +923,8 @@ class ModalVerbView extends WordView {
 	
 		modalVerb = (ModalVerb) word;
 //		text = modalVerb.baseForm;
-//		base.clear();
-//		base.append(modalVerb.baseForm);
-		textView.setText(modalVerb.baseForm);
+		base.clear();
+		base.append(modalVerb.baseForm);
 		subText = "Modal Verb";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
@@ -939,8 +936,7 @@ class ModalVerbView extends WordView {
 	public void negative() {
 	
 //		text += " not";
-//		base.append(" not");
-		textView.append(" not");
+		base.append(" not");
 //		refreshView();
 	}
 	
@@ -986,9 +982,8 @@ class VerbView extends WordView {
 	
 		verb = (Verb) word;
 //		text = verb.sForm;
-//		base.clear();
-//		base.append(verb.sForm);
-		textView.setText(verb.sForm);
+		base.clear();
+		base.append(verb.sForm);
 		subText = "Verb";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
@@ -1000,9 +995,8 @@ class VerbView extends WordView {
 	public void baseForm() {
 	
 //		text = verb.baseForm;
-//		base.clear();
-//		base.append(verb.baseForm);
-		textView.setText(verb.baseForm);
+		base.clear();
+		base.append(verb.baseForm);
 //		refreshView();
 	}
 	
@@ -1010,9 +1004,8 @@ class VerbView extends WordView {
 	public void sForm() {
 	
 //		text = verb.sForm;
-//		base.clear();
-//		base.append(verb.sForm);
-		textView.setText(verb.sForm);
+		base.clear();
+		base.append(verb.sForm);
 //		refreshView();
 	}
 }
@@ -1059,7 +1052,9 @@ class NounView extends WordView {
 	public void setWord(Word word) {
 	
 		this.noun = (Noun) word;
-		textView.setText(noun.single);
+//		text = noun.single;
+		base.clear();
+		base.append(noun.single);
 		subText = "Noun";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
@@ -1070,14 +1065,19 @@ class NounView extends WordView {
 	
 	public void plural() {
 	
-		textView.setText(noun.plural);
+//		text = noun.plural;
+		base.clear();
+		base.append(noun.plural);
 //		refreshView();
 	}
 	
 	
 	public void single() {
 	
-		textView.setText(noun.single);
+//		text = noun.single;
+//		refreshView();
+		base.clear();
+		base.append(noun.single);
 	}
 	
 }
@@ -1109,6 +1109,8 @@ class ConjunctionView extends WordView {
 	}
 	
 	
+	
+	
 	@Override
 	void initWord() {
 	
@@ -1116,20 +1118,22 @@ class ConjunctionView extends WordView {
 	}
 	
 	
+	
 	@Override
 	public void setWord(Word word) {
 	
 		conjunction = (Conjunction) word;
 //		text = conjunction.baseForm;
-//		base.clear();
-//		base.append(conjunction.baseForm);
-		textView.setText(conjunction.baseForm);
+		base.clear();
+		base.append(conjunction.baseForm);
 		subText = "Conj";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
 			Layout.Alignment.ALIGN_CENTER, 1, 0, false);
 //		refreshView();
 	}
+	
+	
 }
 
 
@@ -1172,14 +1176,12 @@ class AdjectiveView extends WordView {
 	
 		adjective = (Adjective) word;
 //		text = adjective.baseForm;
-//		base.clear();
-//		base.append(adjective.baseForm);
-		textView.setText(adjective.baseForm);
+		base.clear();
+		base.append(adjective.baseForm);
 		subText = "Adjective";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
 			Layout.Alignment.ALIGN_CENTER, 1, 0, false);
-//		Log.w("Article", textView.getText() + " is " + textWidth + " x " + textHeight);
 //		refreshView();
 	}
 	
@@ -1224,16 +1226,19 @@ class ArticleView extends WordView {
 	public void setWord(Word word) {
 	
 		article = ((Article) word);
-		textView.setText(article.baseForm);
-		subText = "...";
+//		text = article.baseForm;
+		base.clear();
+		base.append(article.baseForm);
+		subText = ".";
 		subTextLayout = new StaticLayout(subText, subTextPaint,
 			(int) subTextPaint.measureText(subText),
 			Layout.Alignment.ALIGN_CENTER, 1, 0, false);
-//		Log.w("Article", textView.getText() + " is " + textWidth + " x " + textHeight);
+//		refreshView();
+//		Log.w("Article", text + " is " + textWidth + " x " + textHeight);
 	}
 }
 
-abstract class WordView extends LinearLayout {
+abstract class WordView extends View {
 	
 //	protected String	text		= "pepe";
 //	SpannableStringBuilder	base;
@@ -1295,11 +1300,9 @@ abstract class WordView extends LinearLayout {
 //		textLayout = new DynamicLayout(base, base, textPaint, textWidth,
 //			Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
 		textView = new TextView(getContext());
-		textView.setTextSize(26);
 		textView.setLayoutParams(new RelativeLayout.LayoutParams
-			((int) LayoutParams.MATCH_PARENT, (int) LayoutParams.MATCH_PARENT));
+			((int) LayoutParams.WRAP_CONTENT, (int) LayoutParams.WRAP_CONTENT));
 		textView.setText(defaultText);
-		addView(textView);
 		
 		
 		subTextBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -1330,6 +1333,42 @@ abstract class WordView extends LinearLayout {
 	abstract public void setWord(Word word);
 	
 	
+//	public void setText(Word word) {
+//	
+//		subText = word.wordType();
+//		switch (subText) {
+//			case "Verb":
+//				text = ((Verb) word).baseForm;
+//				subTextBGPaint.setColor(Color.GREEN);
+//				break;
+//			case "Noun":
+//				text = ((Noun) word).single;
+//				subTextBGPaint.setColor(Color.BLUE);
+//				break;
+//			case "Conjunction":
+//				text = ((Conjunction) word).baseForm;
+//				subTextBGPaint.setColor(Color.YELLOW);
+//				break;
+//			case "Adjective":
+//				text = ((Adjective) word).baseForm;
+//				subTextBGPaint.setColor(Color.MAGENTA);
+//				break;
+//			default:
+//				text = ((Article) word).baseForm;
+//				subTextBGPaint.setColor(Color.TRANSPARENT);
+//				subText = "";
+//				break;
+//		}
+//		textWidth = (int) textPaint.measureText(text);
+//		textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+//		subTextLayout = new StaticLayout(subText, subTextPaint, (int) subTextPaint.measureText(subText), Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+//		
+////		invalidate();
+////		postInvalidate();
+//		requestLayout();
+////		forceLayout();
+//	}
+	
 	
 	public void capitalize() {
 	
@@ -1345,6 +1384,9 @@ abstract class WordView extends LinearLayout {
 	
 	public void reset() {
 	
+//		text.substring(0, 1).toLowerCase();
+//		refreshView();
+//		base.replace(0, 1, (base.charAt(0) + "").toLowerCase());
 		String text = textView.getText().toString();
 		textView.setText(
 				text.substring(0, 1).toLowerCase() +
@@ -1352,17 +1394,31 @@ abstract class WordView extends LinearLayout {
 	}
 	
 	
+//	protected void refreshView() {
+//	
+//		textWidth = (int) textPaint.measureText(text);
+//		Log.w("Before", textLayout.getText().toString());
+//		textLayout = new DynamicLayout(text, textPaint, textWidth,
+//			Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+//		Log.w("Adter", textLayout.getText().toString());
+//		Rect rect = new Rect();
+//		textPaint.getTextBounds(text, 0, text.length(), rect);
+//		textHeight  = rect.height();
+//		subTextLayout = new StaticLayout(subText, subTextPaint,
+//			(int) subTextPaint.measureText(subText),
+//			Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+//		requestLayout();
+//	}
+	
 	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 	
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		
 //		textWidth = (int) textPaint.measureText(textView.getText().toString());
-//		textView.measure(widthMeasureSpec, heightMeasureSpec);
 		textWidth = textView.getWidth();
 		textHeight = textView.getHeight();
-//		Log.w("Article", textView.getText() + " is " + textWidth + " x " + textHeight);
+		Log.w("Checl", textWidth + " x " + textHeight);
 //		Rect rect = new Rect();
 //		textPaint.getTextBounds(text, 0, text.length(), rect);
 //		textHeight  = rect.height();
@@ -1396,8 +1452,7 @@ abstract class WordView extends LinearLayout {
 		super.onDraw(canvas);
 		
 		
-//		textLayout.draw(canvas);
-//		textView.draw(canvas);
+		textLayout.draw(canvas);
 		canvas.save();
 		canvas.drawRoundRect(rectSubText, 20, 20, subTextBGPaint);
 		canvas.translate(centered, textHeight + textPadding);

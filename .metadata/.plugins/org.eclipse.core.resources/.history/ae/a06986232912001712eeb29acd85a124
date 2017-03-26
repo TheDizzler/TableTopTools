@@ -820,12 +820,19 @@ public class ProphecyView extends LinearLayout {
 	
 	private void addWord(Article article) {
 	
-		WordView wordView = new ArticleView(getContext());
+//		WordView wordView = new ArticleView(getContext());
 //		wordView.setLayoutParams(new LinearLayout.LayoutParams(
 //			LinearLayout.LayoutParams.WRAP_CONTENT,
 //			LinearLayout.LayoutParams.WRAP_CONTENT));
 //		wordView.setWord(article);
 //		addWord(wordView);
+
+		ConjunctionView conjunction2= new ConjunctionView(getContext());
+		conjunction2.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		conjunction2.setWord(new Conjunction("[Conjunction]"));
+		addWord(conjunction2);
 	}
 	
 	

@@ -821,11 +821,11 @@ public class ProphecyView extends LinearLayout {
 	private void addWord(Article article) {
 	
 		WordView wordView = new ArticleView(getContext());
-//		wordView.setLayoutParams(new LinearLayout.LayoutParams(
-//			LinearLayout.LayoutParams.WRAP_CONTENT,
-//			LinearLayout.LayoutParams.WRAP_CONTENT));
-//		wordView.setWord(article);
-//		addWord(wordView);
+		wordView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT));
+		wordView.setWord(article);
+		addWord(wordView);
 	}
 	
 	
@@ -833,13 +833,13 @@ public class ProphecyView extends LinearLayout {
 	
 		wordView.reset();
 		wordList.add(wordView);
-		addView(wordView);
+//		addView(wordView);
 	}
 	
 	
 	public void reset() {
 	
-		removeAllViewsInLayout();
+//		removeAllViewsInLayout();
 		wordList.clear();
 	}
 	
@@ -859,27 +859,27 @@ public class ProphecyView extends LinearLayout {
 		Log.w("Check", widthSize + " x " + heightSize);
 		super.onMeasure(widthSize, heightSize);
 		
-//		for (WordView word : wordList)
-//			word.measure(widthSize, heightSize);
+		for (WordView word : wordList)
+			word.measure(widthSize, heightSize);
 		
 	}
 	
 	
 	
 	
-//	@Override
-//	public void onDraw(Canvas canvas) {
-//	
-//		super.onDraw(canvas);
-////		canvas.save();
-//		for (WordView word : wordList) {
-//			word.draw(canvas);
-////			canvas.translate(centered, textHeight + textPadding);
-//		}
-////		canvas.restore();
-//		
-//		Log.w("Check", "Drawering");
-//	}
+	@Override
+	public void onDraw(Canvas canvas) {
+	
+		super.onDraw(canvas);
+//		canvas.save();
+		for (WordView word : wordList) {
+			word.draw(canvas);
+//			canvas.translate(centered, textHeight + textPadding);
+		}
+//		canvas.restore();
+		
+		Log.w("Check", "Drawering");
+	}
 	
 	
 }
