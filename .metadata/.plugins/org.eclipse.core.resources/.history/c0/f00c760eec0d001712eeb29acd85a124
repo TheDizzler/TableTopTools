@@ -1,8 +1,0 @@
-package fabulousoft.rpgtools.fragments;
-
-import android.app.Fragment;
-
-
-public class ProphecyFragment extends Fragment {
-	
-}

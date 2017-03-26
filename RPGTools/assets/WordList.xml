@@ -116,8 +116,16 @@
 		pray
 	</verbs>
 
-
-
+	
+	<modalVerbs>
+		shall
+		will
+		can
+		may
+		must
+	</modalVerbs>
+	
+	
 	<adjectives>
 		dreadful
 		gelatinous

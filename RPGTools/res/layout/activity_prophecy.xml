@@ -8,14 +8,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="fabulousoft.rpgtools.ProphecyActivity" >
+    tools:context="fabulousoft.rpgtools.ProphecyActivity"
+    android:weightSum="7" >
 
-    <TextView
-        android:id="@+id/textview_prophetic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="[Conjunction] the [primary adj][noun] of [noun] [verb]s [adverb]ally, the [adjective] [noun] will [verb]." />
-
+  
     <fabulousoft.rpgtools.fragments.ProphecyView
         android:id="@+id/prophecyView"
         android:layout_width="match_parent"

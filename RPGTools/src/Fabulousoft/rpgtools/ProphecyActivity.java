@@ -16,7 +16,9 @@ import org.xml.sax.SAXException;
 
 import fabulousoft.rpgtools.fragments.ProphecyView;
 import fabulousoft.rpgtools.objects.Adjective;
+import fabulousoft.rpgtools.objects.Article;
 import fabulousoft.rpgtools.objects.Conjunction;
+import fabulousoft.rpgtools.objects.ModalVerb;
 import fabulousoft.rpgtools.objects.Noun;
 import fabulousoft.rpgtools.objects.Verb;
 import fabulousoft.rpgtools.objects.Word;
@@ -83,7 +85,7 @@ class Prophecy {
 	
 	
 	
-	TextView						propheticText;
+//	TextView						propheticText;
 	
 	/* Cause Controls */
 	ImageView						lockBtnConjunction;
@@ -199,7 +201,7 @@ class Prophecy {
 	
 		prophecyView = (ProphecyView) activity.findViewById(R.id.prophecyView);
 		
-		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
+//		propheticText = (TextView) activity.findViewById(R.id.textview_prophetic);
 		
 		/* Cause Controls */
 		lockBtnConjunction = (ImageView) activity.findViewById(R.id.lockBtn_conj);
@@ -551,64 +553,110 @@ class Prophecy {
 	}
 	
 	
+	Article	space	= new Article(" ");
+	Article	the		= new Article("the ");
+	Article	of		= new Article("of ");
+	Article	comma	= new Article(", ");
+	Article	period	= new Article(".");
+	
+	
 	public void reconstructProphecy() {
 	
 		prophecyView.reset();
 		
 		reconstructCause();
 		fullProphecy += ", ";
+		prophecyView.addWord(comma);
 		reconstrucResult();
 		// close prophecy
 		fullProphecy += ".";
+		prophecyView.addWord(period);
 		
-		propheticText.setText(fullProphecy);
+//		propheticText.setText(fullProphecy);
 	};
 	
 	
 	private void reconstructCause() {
 	
+		prophecyView.addWord(conjunction, true);
 		fullProphecy = firstCharToUpper(conjunction.toString());
 		fullProphecy += " ";
-		if (toggleBtnPrimaryNounProper.isChecked())
+		prophecyView.addWord(space);
+		prophecyView.addWord(the, toggleBtnPrimaryNounProper.isChecked());
+		if (toggleBtnPrimaryNounProper.isChecked()) {
 			fullProphecy += "The ";
-		else
+		} else {
 			fullProphecy += "the ";
+		}
+		
+		prophecyView.addWord(space);
 		
 		if (switchPrimaryAdjective.isChecked()) {
-			if (toggleBtnPrimaryNounProper.isChecked())
-				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString()) + " ";
-			else
-				fullProphecy += causePrimaryAdjective + " ";
-		}
-		
-		prophecyView.addWord(causePrimaryAdjective);
-		if (toggleBtnPrimaryNounPlural.isChecked()) {
-			if (toggleBtnPrimaryNounProper.isChecked())
-				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
-			else
-				fullProphecy += causePrimaryNoun.plural;
-		} else {
-			if (toggleBtnPrimaryNounProper.isChecked())
-				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
-			else
-				fullProphecy += causePrimaryNoun.single;
-		}
-		fullProphecy += " ";
-		
-		
-		if (switchSecondaryNoun.isChecked()) {
-			fullProphecy += "of ";
 			
-			if (switchSecondaryAdjective.isChecked()) {
-				if (toggleBtnSecondaryNounProper.isChecked())
-					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
-				else
-					fullProphecy += causeSecondaryAdjective;
+			prophecyView.addWord(causePrimaryAdjective, toggleBtnPrimaryNounProper.isChecked());
+			
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryAdjective.toString());
+//				prophecyView.addWord(causePrimaryAdjective, true);
+			} else {
+				fullProphecy += causePrimaryAdjective;
+//				prophecyView.addWord(causePrimaryAdjective, false);
 			}
 			
 			fullProphecy += " ";
+			prophecyView.addWord(space);
+		}
+		
+		prophecyView.addWord(causePrimaryNoun,
+				toggleBtnPrimaryNounProper.isChecked(),
+				toggleBtnPrimaryNounPlural.isChecked());
+		
+		if (toggleBtnPrimaryNounPlural.isChecked()) {
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryNoun.plural);
+//				prophecyView.addWord(causePrimaryNoun, true, true);
+			} else {
+				fullProphecy += causePrimaryNoun.plural;
+//				prophecyView.addWord(causePrimaryNoun, false, true);
+			}
+		} else {
+			if (toggleBtnPrimaryNounProper.isChecked()) {
+				fullProphecy += firstCharToUpper(causePrimaryNoun.single);
+//				prophecyView.addWord(causePrimaryNoun, true, false);
+			} else {
+				fullProphecy += causePrimaryNoun.single;
+//				prophecyView.addWord(causePrimaryNoun, true, false);
+			}
+		}
+		
+		fullProphecy += " ";
+		prophecyView.addWord(space);
+		
+		if (switchSecondaryNoun.isChecked()) {
+			fullProphecy += "of ";
+			prophecyView.addWord(of);
+			
+			if (switchSecondaryAdjective.isChecked()) {
+				
+				prophecyView.addWord(causeSecondaryAdjective, toggleBtnSecondaryNounProper.isChecked());
+				
+				if (toggleBtnSecondaryNounProper.isChecked()) {
+					fullProphecy += firstCharToUpper(causeSecondaryAdjective.toString());
+					
+				} else {
+					fullProphecy += causeSecondaryAdjective;
+				}
+			}
+			
+			fullProphecy += " ";
+			prophecyView.addWord(space);
+			
+			prophecyView.addWord(causeSecondaryNoun,
+					toggleBtnSecondaryNounProper.isChecked(),
+					toggleBtnSecondaryNounPlural.isChecked());
 			
 			if (toggleBtnSecondaryNounPlural.isChecked()) {
+
 				if (toggleBtnSecondaryNounProper.isChecked())
 					fullProphecy += firstCharToUpper(causeSecondaryNoun.plural);
 				else
@@ -622,8 +670,9 @@ class Prophecy {
 			}
 		}
 		fullProphecy += " ";
+		prophecyView.addWord(space);
 		
-		
+		prophecyView.addWord(causeVerb, false, toggleBtnPrimaryNounPlural.isChecked());
 		
 		if (toggleBtnPrimaryNounPlural.isChecked())
 			fullProphecy += causeVerb.baseForm;
@@ -635,21 +684,29 @@ class Prophecy {
 	
 	private void reconstrucResult() {
 	
+		prophecyView.addWord(the, toggleBtnResultNounProper.isChecked());
 		if (toggleBtnResultNounProper.isChecked())
 			fullProphecy += "The";
 		else
 			fullProphecy += "the";
 		
 		fullProphecy += " ";
+		prophecyView.addWord(space);
 		
 		if (switchResultAdjective.isChecked()) {
+			prophecyView.addWord(resultAdjective, toggleBtnResultNounProper.isChecked());
 			if (toggleBtnResultNounProper.isChecked())
 				fullProphecy += firstCharToUpper(resultAdjective.toString());
 			else
 				fullProphecy += resultAdjective;
 			
 			fullProphecy += " ";
+			prophecyView.addWord(space);
 		}
+		
+		prophecyView.addWord(resultNoun,
+				toggleBtnResultNounProper.isChecked(),
+				toggleBtnResultNounPlural.isChecked());
 		
 		if (toggleBtnResultNounPlural.isChecked()) {
 			if (toggleBtnResultNounProper.isChecked())
@@ -664,14 +721,18 @@ class Prophecy {
 		}
 		
 		fullProphecy += " ";
+		prophecyView.addWord(space);
 		fullProphecy += "shall ";
+		prophecyView.addWord(new ModalVerb("shall"));
+		prophecyView.addWord(space);
 		fullProphecy += resultVerb.baseForm + " ";
-		fullProphecy += adverb;
+		prophecyView.addWord(resultVerb, false, true);
+//		fullProphecy += adverb;
 		
 	}
 	
 	
-	public static String firstCharToUpper(String change) {
+	public String firstCharToUpper(String change) {
 	
 		return change.substring(0, 1).toUpperCase() + change.substring(1);
 	}
@@ -684,8 +745,9 @@ class Prophecy {
 public class ProphecyActivity extends Activity {
 	
 	/** Temporary prophecy holder. */
-	Prophecy		prophecyText;
-	TabHost			tabHost;
+	Prophecy	prophecyText;
+	TabHost		tabHost;
+	
 	
 //	ProphecyView	prophecyView;
 	
@@ -757,6 +819,13 @@ public class ProphecyActivity extends Activity {
 	}
 	
 	
+	public void generateProphecy(View v) {
+	
+		prophecyText.generateFullProphecy();
+	}
+	
+	
+	
 	private Animation slideToLeftAnimation() {
 	
 		Animation slideOutRight = new TranslateAnimation(
@@ -812,18 +881,6 @@ public class ProphecyActivity extends Activity {
 		
 		
 		return slideFromRight;
-	}
-	
-	
-	private void generateRandomProphecy() {
-	
-		prophecyText.generateFullProphecy();
-	}
-	
-	
-	public void generateProphecy(View v) {
-	
-		generateRandomProphecy();
 	}
 	
 	

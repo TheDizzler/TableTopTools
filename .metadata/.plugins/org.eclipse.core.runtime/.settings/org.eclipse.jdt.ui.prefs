@@ -57,7 +57,7 @@ content_assist_autoactivation_delay=400
 content_assist_autoinsert=false
 content_assist_favorite_static_members=
 content_assist_fill_method_arguments=false
-content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"/>
+content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="android.graphics.Paint"><rhs name\="android.graphics.Paint"/></lhs><lhs name\="java.lang.Enum"><rhs name\="android.graphics.Paint$Cap"/><rhs name\="android.text.Layout$Alignment"/></lhs></history>
 content_assist_number_of_computers=17
 content_assist_proposals_background=255,255,255
 content_assist_proposals_foreground=0,0,0
