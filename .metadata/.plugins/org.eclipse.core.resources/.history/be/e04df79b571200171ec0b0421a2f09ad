@@ -243,7 +243,11 @@ class WordView extends View {
 			
 				textPaint.setUnderlineText(!textPaint.isUnderlineText());
 				textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+				
+				invalidate();
 				postInvalidate();
+//				requestLayout();
+				forceLayout();
 			}
 			
 		});

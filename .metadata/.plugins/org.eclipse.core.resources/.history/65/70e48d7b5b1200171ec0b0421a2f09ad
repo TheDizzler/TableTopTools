@@ -213,7 +213,6 @@
             android:layout_span="1"
             android:layout_weight="1"
             android:text="Verb"
-            android:textColor="#FF00FF00"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner

@@ -21,8 +21,11 @@
             android:layout_span="1"
             android:layout_weight="1"
             android:text="Conjunction"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF00" />
+            android:shadowColor="#FFFFFF00"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="9"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner
             android:id="@+id/spinner_Conjunctions"
@@ -55,7 +58,6 @@
             android:layout_weight="1"
             android:checked="true"
             android:text="Adjective"
-            android:textColor="#FFFF00FF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner
@@ -89,7 +91,6 @@
             android:layout_span="1"
             android:layout_weight="1"
             android:text="Primary Noun"
-            android:textColor="#FF0000FF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ToggleButton
@@ -134,7 +135,6 @@
             android:layout_weight="1"
             android:checked="true"
             android:text="2nd Noun"
-            android:textColor="#FF0000FF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ToggleButton
@@ -179,7 +179,6 @@
             android:layout_weight="1"
             android:checked="true"
             android:text="2nd Adjective"
-            android:textColor="#FFFF00FF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner
@@ -213,7 +212,6 @@
             android:layout_span="1"
             android:layout_weight="1"
             android:text="Verb"
-            android:textColor="#FF00FF00"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner

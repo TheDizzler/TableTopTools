@@ -8,54 +8,20 @@
     android:weightSum="6" >
 
     <TableRow
-        android:id="@+id/tableRow1_conjunction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:weightSum="4" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:text="Conjunction"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF00" />
-
-        <Spinner
-            android:id="@+id/spinner_Conjunctions"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_span="2"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/lockBtn_conj"
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:src="@drawable/unlocked" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow2_primaryAdj"
+        android:id="@+id/tableRow1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:weightSum="4" >
 
         <Switch
-            android:id="@+id/switch_primaryAdjective"
+            android:id="@+id/switch_resultAdjective"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
             android:checked="true"
             android:text="Adjective"
-            android:textColor="#FFFF00FF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner
@@ -67,7 +33,7 @@
             android:visibility="invisible" />
 
         <ImageView
-            android:id="@+id/lockBtn_primaryAdj"
+            android:id="@+id/lockBtn_resultAdjective"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:layout_span="1"
@@ -76,24 +42,23 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow3_primaryNoun"
+        android:id="@+id/tableRow2_noun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:weightSum="4" >
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
-            android:text="Primary Noun"
-            android:textColor="#FF0000FF"
+            android:text="Noun"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ToggleButton
-            android:id="@+id/toggleBtn_primaryNounProper"
+            android:id="@+id/toggleBtn_resultProperNoun"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
@@ -102,7 +67,7 @@
             android:textOn="Proper Noun" />
 
         <ToggleButton
-            android:id="@+id/toggleBtn_primaryNounPlural"
+            android:id="@+id/toggleBtn_resultNounPlural"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
@@ -111,7 +76,7 @@
             android:textOn="Plural" />
 
         <ImageView
-            android:id="@+id/lockBtn_primaryNoun"
+            android:id="@+id/lockBtn_resultNoun"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:layout_span="1"
@@ -120,66 +85,19 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow4_secondaryNoun"
+        android:id="@+id/tableRow3_verb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:weightSum="4" >
 
-        <Switch
-            android:id="@+id/switch_secondaryNoun"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
-            android:checked="true"
-            android:text="2nd Noun"
-            android:textColor="#FF0000FF"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <ToggleButton
-            android:id="@+id/toggleBtn_secondaryNounProper"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:textOff="Common Noun"
-            android:textOn="Proper Noun" />
-
-        <ToggleButton
-            android:id="@+id/toggleBtn_secondaryNounPlural"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:textOff="Single"
-            android:textOn="Plural" />
-
-        <ImageView
-            android:id="@+id/lockBtn_secondaryNoun"
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:src="@drawable/unlocked" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow5_secondaryAdj"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:weightSum="4" >
-
-        <Switch
-            android:id="@+id/switch_secondaryAdjective"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_span="1"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="2nd Adjective"
-            android:textColor="#FFFF00FF"
+            android:text="Verb"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Spinner
@@ -191,7 +109,7 @@
             android:visibility="invisible" />
 
         <ImageView
-            android:id="@+id/lockBtn_secondaryAdjective"
+            android:id="@+id/lockBtn_resultVerb"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:layout_span="1"
@@ -200,37 +118,53 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow6_causeVerb"
+        android:id="@+id/tableRow4_adverb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:weightSum="4" >
 
         <TextView
-            android:id="@+id/textView_causeVerb"
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
-            android:text="Verb"
-            android:textColor="#FF00FF00"
+            android:text="Adverb"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Spinner
-            android:id="@+id/spacer3"
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_span="2"
             android:layout_weight="1"
-            android:visibility="invisible" />
+            android:text="Not Implemented!"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageView
-            android:id="@+id/lockBtn_causeVerb"
+            android:id="@+id/lockBtn_resultAdverb"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:layout_span="1"
             android:layout_weight="1"
             android:src="@drawable/unlocked" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow5_spacer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="4" >
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow6_spacer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="4" >
     </TableRow>
 
 </TableLayout>

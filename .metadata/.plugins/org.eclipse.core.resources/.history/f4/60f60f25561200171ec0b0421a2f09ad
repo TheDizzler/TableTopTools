@@ -242,8 +242,7 @@ class WordView extends View {
 			public void onClick(View arg0) {
 			
 				textPaint.setUnderlineText(!textPaint.isUnderlineText());
-				textLayout = new DynamicLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
-				postInvalidate();
+				
 			}
 			
 		});
@@ -386,7 +385,7 @@ class WordView extends View {
 		
 		textLayout.draw(canvas);
 		
-		canvas.drawRoundRect(rectSubText, 16, 40, subTextBGPaint);
+		canvas.drawRoundRect(rectSubText, 20, 20, subTextBGPaint);
 		canvas.translate(centered, textHeight + textPadding);
 		subTextLayout.draw(canvas);
 		canvas.restore();

@@ -593,6 +593,7 @@ class Prophecy {
 		prophecyView.addWord(space);
 		prophecyView.addWord(the, toggleBtnPrimaryNounProper.isChecked());
 		
+		prophecyView.addWord(space);
 		
 		if (switchPrimaryAdjective.isChecked()) {
 			
@@ -646,6 +647,12 @@ class Prophecy {
 		prophecyView.addWord(resultVerb, false, true);
 //		fullProphecy += adverb;
 		
+	}
+	
+	
+	public String firstCharToUpper(String change) {
+	
+		return change.substring(0, 1).toUpperCase() + change.substring(1);
 	}
 
 }

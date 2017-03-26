@@ -593,6 +593,7 @@ class Prophecy {
 		prophecyView.addWord(space);
 		prophecyView.addWord(the, toggleBtnPrimaryNounProper.isChecked());
 		
+		prophecyView.addWord(space);
 		
 		if (switchPrimaryAdjective.isChecked()) {
 			
